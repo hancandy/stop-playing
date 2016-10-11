@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "InteractiveActor.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteraction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteraction, APawn*, InteractingPawn);
 
 UCLASS()
 class STOPPLAYING_API AInteractiveActor : public AActor

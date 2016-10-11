@@ -26,3 +26,10 @@ void AInteractiveActor::Tick( float DeltaTime )
 
 }
 
+/**
+ * Interacting with this actor
+ */
+void  AInteractiveActor::Interact(APawn* InteractingPawn)
+{
+    OnInteraction.Broadcast(InteractingPawn);
+}
