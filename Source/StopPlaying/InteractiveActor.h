@@ -29,9 +29,10 @@ public:
     FString InteractionMessage = "Interact";
 
     void Interact(APawn* InteractingPawn);
-
-private:
+    
     UPROPERTY(BlueprintAssignable, Category="InteractiveActor")
     FOnInteraction OnInteraction;
 	
+private:
+
 };
