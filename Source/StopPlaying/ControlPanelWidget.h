@@ -50,26 +50,51 @@ public:
     void Init(AActor* Connected);
 
 private:
-    /**
-     * Sets widget label
-     */
-    void SetLabel();
-
-    /**
-     * Gets actor primitive component
-     */
-    UPrimitiveComponent* GetActorPrimitiveComponent();
-    
     UPROPERTY(EditAnywhere)
     EControlPanelWidgetType Type = EControlPanelWidgetType::GRAVITY_BUTTON;	
 	
     UPROPERTY(EditAnywhere)
     FString Label = "Property";
 
+    UPROPERTY(EditAnywhere)
+    int32 Timeout = 0;
+
     UFUNCTION()
     void OnInteract(APawn* InteractingPawn);
 
     AActor* ConnectedActor = nullptr;
     AInteractiveActor* ChildActor = nullptr;
+    
+    FTimerHandle TimerHandle;
+    int32 Timer = 0;
 
+    /**
+     * Sets widget label
+     */
+    void SetLabel(FString Suffix = "");
+
+    /**
+     * Gets actor primitive component
+     */
+    UPrimitiveComponent* GetActorPrimitiveComponent();
+ 
+    /**
+     * Toggles the specified effect
+     */
+    void ToggleEffect();
+
+    /**
+     * Resets the timer
+     */
+    void ResetTimer();
+
+    /**
+     * Ticks the timer
+     */
+    void TickTimer();
+    
+    /**
+     * Starts the timer
+     */
+    void StartTimer();
 };

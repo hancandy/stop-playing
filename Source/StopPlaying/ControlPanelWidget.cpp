@@ -18,10 +18,21 @@ void UControlPanelWidget::Init(AActor* Connected)
 
 void UControlPanelWidget::OnInteract(APawn* InteractingPawn)
 {
-    if(!InteractingPawn) { return; }
+    ToggleEffect();
+    
+    // Handle timer
+    if(Timer > 0)
+    {
+        ResetTimer();
+    }
+    else if(Timeout > 0)
+    {
+        StartTimer();
+    }
+}
 
-    UE_LOG(LogTemp, Warning, TEXT("%s interacted with %s"), *InteractingPawn->GetName(), *GetName());
-
+void UControlPanelWidget::ToggleEffect()
+{
     switch(Type)
     {
         case EControlPanelWidgetType::GRAVITY_BUTTON:
@@ -47,7 +58,7 @@ bool UControlPanelWidget::HasConnectedActor()
     return true;
 }
 
-void UControlPanelWidget::SetLabel()
+void UControlPanelWidget::SetLabel(FString Suffix)
 {
     if(!ChildActor) { return; }
 
@@ -78,6 +89,8 @@ void UControlPanelWidget::SetLabel()
             NewLabel += " OFF";
         }
 
+        NewLabel += Suffix;
+
         TextRenderComponent->SetText(FText::FromString(NewLabel));
     }
 }
@@ -94,6 +107,44 @@ UPrimitiveComponent* UControlPanelWidget::GetActorPrimitiveComponent()
     }
 
     return PrimitiveComponent;
+}
+
+// --------------------
+// Timer functions
+// --------------------
+void UControlPanelWidget::StartTimer()
+{
+    ResetTimer();
+
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UControlPanelWidget::TickTimer, 1.f, true);
+
+    Timer = Timeout;
+    
+    SetLabel(" (" + FString::FromInt(Timer) + ")");
+}
+
+void UControlPanelWidget::TickTimer()
+{
+    Timer--;
+
+    if(Timer <= 0)
+    {
+        ResetTimer();
+        ToggleEffect();
+    }
+    else
+    {
+        SetLabel(" (" + FString::FromInt(Timer) + ")");
+    }
+}
+
+void UControlPanelWidget::ResetTimer()
+{
+    GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+
+    Timer = 0;
+
+    SetLabel();
 }
 
 // --------------------
