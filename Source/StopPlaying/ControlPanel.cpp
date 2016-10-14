@@ -35,66 +35,71 @@ void AControlPanel::InitAllWidgets()
 
 void AControlPanel::AssignAllWidgets()
 {
-    TArray<USceneComponent*> Components;
+    // Loop all text render components
+    TArray<UTextRenderComponent*> TextRenderComponents;
 
-    GetComponents(Components);
+    GetComponents(TextRenderComponents);
 
-    for(USceneComponent* Component : Components)
+    for(UTextRenderComponent* TextRenderComponent : TextRenderComponents)
     {
-        if(!Component) { continue; }
+        if(!TextRenderComponent) { continue; }
 
-        FString Name = Component->GetName();
-        UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(Component);
-        UTextRenderComponent* TextRenderComponent = Cast<UTextRenderComponent>(Component);
+        if(TextRenderComponent->GetName() == "Title")
+        {
+            TitleComponent = TextRenderComponent;
+        }
+    }
+
+    // Loop all widgets
+    TArray<UControlPanelWidget*> Widgets;
+
+    GetComponents(Widgets);
+
+    for(UControlPanelWidget* Widget : Widgets)
+    {
+        InitWidget(Widget);
+    }
+}
+
+void AControlPanel::InitWidget(UControlPanelWidget* Widget)
+{
+    if(!Widget) { return; }
+    
+    AActor* ChildActor = Widget->GetChildActor();
+
+    if(!ChildActor)
+
+    switch(Widget->Type)
+    {
+        case EControlPanelWidgetType::GRAVITY_BUTTON:
+            GravityButton = Cast<AInteractiveActor>(ChildActor);
+            
+            if(GravityButton)
+            {   
+                UE_LOG(LogTemp, Warning, TEXT("%s found \"GravityButton\" %s"), *GetName(), *GravityButton->GetName());
         
-        // Text render components
-        if(TextRenderComponent)
-        {
-            if(Name == "Title")
-            {
-                TitleComponent = TextRenderComponent;
+                GravityButton->OnInteraction.AddDynamic(this, &AControlPanel::OnClickGravityButton);
             }
-        }
-
-        // Child actor components
-        if(ChildActorComponent)
-        {
-            AActor* ChildActor = ChildActorComponent->GetChildActor();
-
-            if(!ChildActor) { continue; }
-
-            if(Name == "GravityButton")
+            else
             {
-                GravityButton = Cast<AInteractiveActor>(ChildActor);
+                UE_LOG(LogTemp, Error, TEXT("%s has a \"GravityButton\", but it's not an AInteractiveActor class"), *GetName());
+            }
+            break;
+        
+        case EControlPanelWidgetType::COLLISION_BUTTON:
+            CollisionButton = Cast<AInteractiveActor>(ChildActor);
+
+            if(CollisionButton)
+            {   
+                UE_LOG(LogTemp, Warning, TEXT("%s found \"CollisionButton\" %s"), *GetName(), *CollisionButton->GetName());
                 
-                if(GravityButton)
-                {   
-                    UE_LOG(LogTemp, Warning, TEXT("%s found \"GravityButton\" %s"), *GetName(), *GravityButton->GetName());
-            
-                    GravityButton->OnInteraction.AddDynamic(this, &AControlPanel::OnClickGravityButton);
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("%s has a \"GravityButton\", but it's not a AInteractiveActor class"), *GetName());
-                }
+                CollisionButton->OnInteraction.AddDynamic(this, &AControlPanel::OnClickCollisionButton);
             }
-            
-            if(Name == "CollisionButton")
+            else
             {
-                CollisionButton = Cast<AInteractiveActor>(ChildActor);
-
-                if(CollisionButton)
-                {   
-                    UE_LOG(LogTemp, Warning, TEXT("%s found \"CollisionButton\" %s"), *GetName(), *CollisionButton->GetName());
-                    
-                    CollisionButton->OnInteraction.AddDynamic(this, &AControlPanel::OnClickCollisionButton);
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("%s has a \"CollisionButton\", but it's not a AInteractiveActor class"), *GetName());
-                }
+                UE_LOG(LogTemp, Error, TEXT("%s has a \"CollisionButton\", but it's not an AInteractiveActor class"), *GetName());
             }
-        }
+            break;
     }
 }
 

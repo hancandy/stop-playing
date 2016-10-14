@@ -1,6 +1,7 @@
 #pragma once
 
 #include "InteractiveActor.h"
+#include "ControlPanelWidget.h"
 
 #include "GameFramework/Actor.h"
 #include "ControlPanel.generated.h"
@@ -82,6 +83,11 @@ private:
      * Sets the appropriate panel title
      */
     void SetTitle();
+
+    /**
+     * Initialises a widget
+     */
+    void InitWidget(UControlPanelWidget* Widget);
 
     /**
      * Event: Click gravity button
