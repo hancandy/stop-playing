@@ -19,7 +19,7 @@ public:
 
 private:
     UPROPERTY(EditAnywhere)
-    bool bConnectedActorIsPlayer = false;
+    bool bConnectedActorIsWorld = false;
 
     UPROPERTY(EditAnywhere)
     AActor* ConnectedActor = nullptr;

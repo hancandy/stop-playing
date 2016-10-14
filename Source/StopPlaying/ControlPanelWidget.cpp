@@ -1,6 +1,12 @@
 #include "StopPlaying.h"
 #include "ControlPanelWidget.h"
 
+UControlPanelWidget::UControlPanelWidget()
+{
+	bWantsBeginPlay = true;
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
 void UControlPanelWidget::Init(AActor* Connected)
 {
     ConnectedActor = Connected;
@@ -12,6 +18,8 @@ void UControlPanelWidget::Init(AActor* Connected)
     }
     
     ChildActor->OnInteraction.AddDynamic(this, &UControlPanelWidget::OnInteract);
+
+    SetEffectActive(bInitialState);
 
     SetLabel();
 }
@@ -33,16 +41,7 @@ void UControlPanelWidget::OnInteract(APawn* InteractingPawn)
 
 void UControlPanelWidget::ToggleEffect()
 {
-    switch(Type)
-    {
-        case EControlPanelWidgetType::GRAVITY_BUTTON:
-            SetGravity(!GetGravity());
-            break;
-
-        case EControlPanelWidgetType::COLLISION_BUTTON:
-            SetCollision(!GetCollision());
-            break;
-    }
+    SetEffectActive(!IsEffectActive());
 
     SetLabel();
 }
@@ -67,20 +66,8 @@ void UControlPanelWidget::SetLabel(FString Suffix)
     if(TextRenderComponent)
     {
         FString NewLabel = Label;
-        bool bState = false;
-    
-        switch(Type)
-        {
-            case EControlPanelWidgetType::GRAVITY_BUTTON:
-                bState = GetGravity();
-                break;
 
-            case EControlPanelWidgetType::COLLISION_BUTTON:
-                bState = GetCollision();
-                break;
-        }
-
-        if(bState)
+        if(IsEffectActive())
         {
             NewLabel += " ON";
         }
@@ -95,18 +82,42 @@ void UControlPanelWidget::SetLabel(FString Suffix)
     }
 }
 
-UPrimitiveComponent* UControlPanelWidget::GetActorPrimitiveComponent()
+UMeshComponent* UControlPanelWidget::GetActorMeshComponent()
 {
     if(!HasConnectedActor()) { return nullptr; }
 
-    UPrimitiveComponent* PrimitiveComponent = ConnectedActor->FindComponentByClass<UPrimitiveComponent>();
+    UMeshComponent* MeshComponent = ConnectedActor->FindComponentByClass<UMeshComponent>();
 
-    if(!PrimitiveComponent)
+    if(!MeshComponent)
     {
-        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent"), *ConnectedActor->GetName());
+        UE_LOG(LogTemp, Error, TEXT("%s has no UMeshComponent"), *ConnectedActor->GetName());
     }
 
-    return PrimitiveComponent;
+    return MeshComponent;
+}
+
+// TODO What makes this tick? It's not ticking
+void UControlPanelWidget::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+{
+	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
+  
+    UE_LOG(LogTemp, Warning, TEXT("TICKING")); 
+
+    if(!ConnectedActor) { return; }
+
+    if(bIsEffectActive)
+    {
+        switch(Type)
+        {
+            case EControlPanelWidgetType::ROTATION_BUTTON:
+                FRotator NewRotator = ConnectedActor->GetActorRotation();
+
+                NewRotator.Yaw += 5.f * DeltaTime;
+
+                ConnectedActor->SetActorRelativeRotation(NewRotator);
+                break;    
+        } 
+    }
 }
 
 // --------------------
@@ -148,24 +159,56 @@ void UControlPanelWidget::ResetTimer()
 }
 
 // --------------------
-// Widget functions
+// Effect functions
 // --------------------
+void UControlPanelWidget::SetEffectActive(bool bNewState)
+{
+    bIsEffectActive = bNewState;
+
+    switch(Type)
+    {
+        case EControlPanelWidgetType::GRAVITY_BUTTON:
+            SetGravity(bIsEffectActive);
+            break;
+
+        case EControlPanelWidgetType::COLLISION_BUTTON:
+            SetCollision(bIsEffectActive);
+            break;
+    }
+}
+
+bool UControlPanelWidget::IsEffectActive()
+{
+    switch(Type)
+    {
+        case EControlPanelWidgetType::GRAVITY_BUTTON:
+            bIsEffectActive = GetGravity();
+            break;
+
+        case EControlPanelWidgetType::COLLISION_BUTTON:
+            bIsEffectActive = GetCollision();
+            break;
+    }
+
+    return bIsEffectActive;
+}
+
 bool UControlPanelWidget::GetGravity()
 {
-    UPrimitiveComponent* PrimitiveComponent = GetActorPrimitiveComponent();
+    UMeshComponent* MeshComponent = GetActorMeshComponent();
     
-    if(!PrimitiveComponent) { return false; }
+    if(!MeshComponent) { return false; }
 
-    return PrimitiveComponent->IsGravityEnabled();
+    return MeshComponent->IsGravityEnabled();
 }
 
 void UControlPanelWidget::SetGravity(bool bIsEnabled)
 {
-    UPrimitiveComponent* PrimitiveComponent = GetActorPrimitiveComponent();
+    UMeshComponent* MeshComponent = GetActorMeshComponent();
     
-    if(!PrimitiveComponent) { return; }
+    if(!MeshComponent) { return; }
 
-    PrimitiveComponent->SetEnableGravity(bIsEnabled);
+    MeshComponent->SetEnableGravity(bIsEnabled);
 }
 
 bool UControlPanelWidget::GetCollision()

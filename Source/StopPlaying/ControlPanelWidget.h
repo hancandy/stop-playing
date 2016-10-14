@@ -9,7 +9,8 @@ UENUM(BlueprintType)
 enum class EControlPanelWidgetType : uint8
 {
     GRAVITY_BUTTON          UMETA(DisplayName="Gravity Button"),
-    COLLISION_BUTTON        UMETA(DisplayName="Collision Button")
+    COLLISION_BUTTON        UMETA(DisplayName="Collision Button"),
+    ROTATION_BUTTON         UMETA(DisplayName="Rotation Button")
 };
 
 
@@ -19,6 +20,20 @@ class STOPPLAYING_API UControlPanelWidget : public UChildActorComponent
 	GENERATED_BODY()
 
 public:
+    UControlPanelWidget();
+
+	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+
+    /**
+     * Gets abstract active state
+     */
+    bool IsEffectActive();
+
+    /**
+     * Sets abstract active state
+     */
+    void SetEffectActive(bool bNewState);
+
     /**
      * Get gravity state
      */
@@ -40,11 +55,6 @@ public:
     void SetCollision(bool bIsEnabled);
 
     /**
-     * Checks if we have a connected actor
-     */
-    bool HasConnectedActor();
-
-    /**
      * Initialises a widget
      */
     void Init(AActor* Connected);
@@ -59,6 +69,9 @@ private:
     UPROPERTY(EditAnywhere)
     int32 Timeout = 0;
 
+    UPROPERTY(EditAnywhere)
+    bool bInitialState = false;
+
     UFUNCTION()
     void OnInteract(APawn* InteractingPawn);
 
@@ -68,6 +81,8 @@ private:
     FTimerHandle TimerHandle;
     int32 Timer = 0;
 
+    bool bIsEffectActive = false;
+
     /**
      * Sets widget label
      */
@@ -76,7 +91,7 @@ private:
     /**
      * Gets actor primitive component
      */
-    UPrimitiveComponent* GetActorPrimitiveComponent();
+    UMeshComponent* GetActorMeshComponent();
  
     /**
      * Toggles the specified effect
@@ -97,4 +112,10 @@ private:
      * Starts the timer
      */
     void StartTimer();
+    
+    /**
+     * Checks if a connected actor is assigned
+     */
+    bool HasConnectedActor();
+
 };
