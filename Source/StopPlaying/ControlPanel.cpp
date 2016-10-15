@@ -16,6 +16,11 @@ void AControlPanel::BeginPlay()
         //ConnectedActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     }
 
+    if(!ConnectedActor) {
+        UE_LOG(LogTemp, Error, TEXT("%s has no connected actor"), *GetName());
+        return;
+    }
+    
     InitAllWidgets();
 
     SetTitle();

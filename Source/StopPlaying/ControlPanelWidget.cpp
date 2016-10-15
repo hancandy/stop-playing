@@ -12,12 +12,18 @@ void UControlPanelWidget::Init(AActor* Connected)
     ConnectedActor = Connected;
     ChildActor = Cast<AInteractiveActor>(GetChildActor());
             
+    if(!ConnectedActor) { return; }
+    
     if(!ChildActor) {
         UE_LOG(LogTemp, Error, TEXT("%s has no child actor"), *GetName());
         return;
     }
     
     ChildActor->OnInteraction.AddDynamic(this, &UControlPanelWidget::OnInteract);
+
+    InitialPosition = ConnectedActor->GetActorLocation();
+    InitialDirection = ConnectedActor->GetActorForwardVector();
+    InitialScale = ConnectedActor->GetActorRelativeScale3D();
 
     SetEffectActive(bInitialState);
 
@@ -26,6 +32,8 @@ void UControlPanelWidget::Init(AActor* Connected)
 
 void UControlPanelWidget::OnInteract(APawn* InteractingPawn)
 {
+    if(!bIsWidgetActive) { return; }
+
     ToggleEffect();
     
     // Handle timer
@@ -98,21 +106,47 @@ UMeshComponent* UControlPanelWidget::GetActorMeshComponent()
 
 void UControlPanelWidget::TickWidget(float DeltaTime)
 {
+    if(!bIsWidgetActive) { return; }
     if(!ConnectedActor) { return; }
+    
+    FVector NewVector = InitialPosition;
+    FVector NewScale = InitialScale;
 
-    if(bIsEffectActive)
+    switch(Type)
     {
-        switch(Type)
-        {
-            case EControlPanelWidgetType::ROTATION_BUTTON:
+        case EControlPanelWidgetType::ROTATION_BUTTON:
+            if(bIsEffectActive)
+            {
                 FRotator NewRotator = ConnectedActor->GetActorRotation();
 
-                NewRotator.Yaw += 50.f * DeltaTime;
+                NewRotator.Yaw += 50.f * EffectScale * DeltaTime;
 
                 ConnectedActor->SetActorRelativeRotation(NewRotator);
-                break;    
-        } 
-    }
+            }
+            break;   
+
+        case EControlPanelWidgetType::TRANSLATION_BUTTON:
+            if(bIsEffectActive)
+            {
+                NewVector += InitialDirection * 100.f * EffectScale;                
+            }
+
+            NewVector = FMath::Lerp(ConnectedActor->GetActorLocation(), NewVector, DeltaTime * 5.f * EffectScale);
+
+            ConnectedActor->SetActorLocation(NewVector);
+            break;     
+        
+        case EControlPanelWidgetType::SCALE_BUTTON:
+            if(bIsEffectActive)
+            {
+                NewScale *= EffectScale;                
+            }
+
+            NewScale = FMath::Lerp(ConnectedActor->GetActorRelativeScale3D(), NewScale, DeltaTime * 5.f * EffectScale);
+
+            ConnectedActor->SetActorRelativeScale3D(NewScale);
+            break;
+    } 
 }
 
 // --------------------

@@ -10,7 +10,9 @@ enum class EControlPanelWidgetType : uint8
 {
     GRAVITY_BUTTON          UMETA(DisplayName="Gravity Button"),
     COLLISION_BUTTON        UMETA(DisplayName="Collision Button"),
-    ROTATION_BUTTON         UMETA(DisplayName="Rotation Button")
+    ROTATION_BUTTON         UMETA(DisplayName="Rotation Button"),
+    TRANSLATION_BUTTON      UMETA(DisplayName="Translation Button"),
+    SCALE_BUTTON            UMETA(DisplayName="Scale Button")
 };
 
 
@@ -21,6 +23,9 @@ class STOPPLAYING_API UControlPanelWidget : public UChildActorComponent
 
 public:
     UControlPanelWidget();
+
+    UPROPERTY(EditAnywhere)
+    bool bIsWidgetActive = true;
 
     /**
      * Widget tick
@@ -75,6 +80,9 @@ private:
     UPROPERTY(EditAnywhere)
     bool bInitialState = false;
 
+    UPROPERTY(EditAnywhere)
+    float EffectScale = 1.f;
+
     UFUNCTION()
     void OnInteract(APawn* InteractingPawn);
 
@@ -83,6 +91,10 @@ private:
     
     FTimerHandle TimerHandle;
     int32 Timer = 0;
+
+    FVector InitialPosition;
+    FVector InitialDirection;
+    FVector InitialScale;
 
     bool bIsEffectActive = false;
 
