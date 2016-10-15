@@ -9,9 +9,11 @@ UControlPanelWidget::UControlPanelWidget()
 
 void UControlPanelWidget::Init(AActor* Connected)
 {
+    // Assign relevant actors
     ConnectedActor = Connected;
     ChildActor = Cast<AInteractiveActor>(GetChildActor());
             
+    // Protect the pointers
     if(!ConnectedActor) { return; }
     
     if(!ChildActor) {
@@ -19,14 +21,39 @@ void UControlPanelWidget::Init(AActor* Connected)
         return;
     }
     
+    // Add interaction event
     ChildActor->OnInteraction.AddDynamic(this, &UControlPanelWidget::OnInteract);
 
+    // Set initial transform data
     InitialPosition = ConnectedActor->GetActorLocation();
     InitialDirection = ConnectedActor->GetActorForwardVector();
     InitialScale = ConnectedActor->GetActorRelativeScale3D();
 
+    // Get dynamic material instance
+    MeshComponent = ConnectedActor->FindComponentByClass<UMeshComponent>(); 
+
+    if(MeshComponent)
+    {
+        UMaterialInterface* Material = MeshComponent->GetMaterial(0);
+
+        if(Material)
+        {
+            if(Material->IsA(UMaterialInstanceDynamic::StaticClass()))
+            {
+                DynamicMaterialInstance = Cast<UMaterialInstanceDynamic>(Material);
+            }
+            else
+            {
+                DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+                MeshComponent->SetMaterial(0, DynamicMaterialInstance);
+            }
+        }
+    }
+
+    // Activate effect
     SetEffectActive(bInitialState);
 
+    // Set appropriate label
     SetLabel();
 }
 
@@ -88,20 +115,6 @@ void UControlPanelWidget::SetLabel(FString Suffix)
 
         TextRenderComponent->SetText(FText::FromString(NewLabel));
     }
-}
-
-UMeshComponent* UControlPanelWidget::GetActorMeshComponent()
-{
-    if(!HasConnectedActor()) { return nullptr; }
-
-    UMeshComponent* MeshComponent = ConnectedActor->FindComponentByClass<UMeshComponent>();
-
-    if(!MeshComponent)
-    {
-        UE_LOG(LogTemp, Error, TEXT("%s has no UMeshComponent"), *ConnectedActor->GetName());
-    }
-
-    return MeshComponent;
 }
 
 void UControlPanelWidget::TickWidget(float DeltaTime)
@@ -203,6 +216,10 @@ void UControlPanelWidget::SetEffectActive(bool bNewState)
         case EControlPanelWidgetType::COLLISION_BUTTON:
             SetCollision(bIsEffectActive);
             break;
+        
+        case EControlPanelWidgetType::GLOW_BUTTON:
+            SetGlow(bIsEffectActive);
+            break;
     }
 }
 
@@ -217,6 +234,10 @@ bool UControlPanelWidget::IsEffectActive()
         case EControlPanelWidgetType::COLLISION_BUTTON:
             bIsEffectActive = GetCollision();
             break;
+        
+        case EControlPanelWidgetType::GLOW_BUTTON:
+            bIsEffectActive = GetGlow();
+            break;
     }
 
     return bIsEffectActive;
@@ -224,8 +245,6 @@ bool UControlPanelWidget::IsEffectActive()
 
 bool UControlPanelWidget::GetGravity()
 {
-    UMeshComponent* MeshComponent = GetActorMeshComponent();
-    
     if(!MeshComponent) { return false; }
 
     return MeshComponent->IsGravityEnabled();
@@ -233,8 +252,6 @@ bool UControlPanelWidget::GetGravity()
 
 void UControlPanelWidget::SetGravity(bool bIsEnabled)
 {
-    UMeshComponent* MeshComponent = GetActorMeshComponent();
-    
     if(!MeshComponent) { return; }
 
     MeshComponent->SetEnableGravity(bIsEnabled);
@@ -252,4 +269,25 @@ void UControlPanelWidget::SetCollision(bool bIsEnabled)
     if(!ConnectedActor) { return; }
 
     ConnectedActor->SetActorEnableCollision(bIsEnabled);
+}
+
+bool UControlPanelWidget::GetGlow()
+{
+    float Value = 0.f;
+
+    DynamicMaterialInstance->GetScalarParameterValue(FName(TEXT("Glow")), Value);
+    
+    return Value == EffectScale;
+}
+
+void UControlPanelWidget::SetGlow(bool bIsEnabled)
+{
+    float NewGlow = 0.f;
+
+    if(bIsEnabled)
+    {
+        NewGlow = EffectScale;
+    }
+
+    DynamicMaterialInstance->SetScalarParameterValue(FName(TEXT("Glow")), NewGlow);    
 }

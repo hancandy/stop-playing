@@ -12,7 +12,8 @@ enum class EControlPanelWidgetType : uint8
     COLLISION_BUTTON        UMETA(DisplayName="Collision Button"),
     ROTATION_BUTTON         UMETA(DisplayName="Rotation Button"),
     TRANSLATION_BUTTON      UMETA(DisplayName="Translation Button"),
-    SCALE_BUTTON            UMETA(DisplayName="Scale Button")
+    SCALE_BUTTON            UMETA(DisplayName="Scale Button"),
+    GLOW_BUTTON             UMETA(DisplayName="Glow Button")
 };
 
 
@@ -63,6 +64,16 @@ public:
     void SetCollision(bool bIsEnabled);
 
     /**
+     * Get glow state
+     */
+    bool GetGlow();
+
+    /**
+     * Set glow state
+     */
+    void SetGlow(bool bIsEnabled);
+    
+    /**
      * Initialises a widget
      */
     void Init(AActor* Connected);
@@ -98,16 +109,14 @@ private:
 
     bool bIsEffectActive = false;
 
+    UMeshComponent* MeshComponent = nullptr;
+    UMaterialInstanceDynamic* DynamicMaterialInstance = nullptr;
+
     /**
      * Sets widget label
      */
     void SetLabel(FString Suffix = "");
 
-    /**
-     * Gets actor primitive component
-     */
-    UMeshComponent* GetActorMeshComponent();
- 
     /**
      * Toggles the specified effect
      */
