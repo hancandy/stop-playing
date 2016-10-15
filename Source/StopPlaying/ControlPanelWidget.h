@@ -22,7 +22,10 @@ class STOPPLAYING_API UControlPanelWidget : public UChildActorComponent
 public:
     UControlPanelWidget();
 
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+    /**
+     * Widget tick
+     */
+    void TickWidget(float DeltaTime);
 
     /**
      * Gets abstract active state

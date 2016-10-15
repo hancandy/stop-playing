@@ -96,13 +96,8 @@ UMeshComponent* UControlPanelWidget::GetActorMeshComponent()
     return MeshComponent;
 }
 
-// TODO What makes this tick? It's not ticking
-void UControlPanelWidget::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
+void UControlPanelWidget::TickWidget(float DeltaTime)
 {
-	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-  
-    UE_LOG(LogTemp, Warning, TEXT("TICKING")); 
-
     if(!ConnectedActor) { return; }
 
     if(bIsEffectActive)
@@ -112,7 +107,7 @@ void UControlPanelWidget::TickComponent( float DeltaTime, ELevelTick TickType, F
             case EControlPanelWidgetType::ROTATION_BUTTON:
                 FRotator NewRotator = ConnectedActor->GetActorRotation();
 
-                NewRotator.Yaw += 5.f * DeltaTime;
+                NewRotator.Yaw += 50.f * DeltaTime;
 
                 ConnectedActor->SetActorRelativeRotation(NewRotator);
                 break;    

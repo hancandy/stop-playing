@@ -11,9 +11,9 @@ void AControlPanel::BeginPlay()
 	Super::BeginPlay();
 
     // Fetch the player actor if necessary
-    if(bConnectedActorIsPlayer)
+    if(bConnectedActorIsWorld)
     {
-        ConnectedActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+        //ConnectedActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
     }
 
     InitAllWidgets();
@@ -24,6 +24,13 @@ void AControlPanel::BeginPlay()
 void AControlPanel::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+    for(UControlPanelWidget* Widget : Widgets)
+    {
+        if(!Widget) { continue; }
+
+        Widget->TickWidget(DeltaTime);
+    }
 }
 
 void AControlPanel::InitAllWidgets()
@@ -44,8 +51,6 @@ void AControlPanel::InitAllWidgets()
     }
 
     // Loop all widgets
-    TArray<UControlPanelWidget*> Widgets;
-
     GetComponents(Widgets);
 
     for(UControlPanelWidget* Widget : Widgets)

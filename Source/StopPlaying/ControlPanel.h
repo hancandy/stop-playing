@@ -26,6 +26,7 @@ private:
 
     // These will be automatically assigned
     UTextRenderComponent* TitleComponent = nullptr;
+    TArray<UControlPanelWidget*> Widgets;
 
     /**
      * Initialises all widgets with the correct labels
