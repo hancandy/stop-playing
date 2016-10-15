@@ -10,12 +10,6 @@ void AControlPanel::BeginPlay()
 {
 	Super::BeginPlay();
 
-    // Fetch the player actor if necessary
-    if(bConnectedActorIsWorld)
-    {
-        //ConnectedActor = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-    }
-
     if(!ConnectedActor) {
         UE_LOG(LogTemp, Error, TEXT("%s has no connected actor"), *GetName());
         return;

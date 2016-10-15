@@ -220,6 +220,10 @@ void UControlPanelWidget::SetEffectActive(bool bNewState)
         case EControlPanelWidgetType::GLOW_BUTTON:
             SetGlow(bIsEffectActive);
             break;
+        
+        case EControlPanelWidgetType::TIME_BUTTON:
+            SetTime(bIsEffectActive);
+            break;
     }
 }
 
@@ -237,6 +241,10 @@ bool UControlPanelWidget::IsEffectActive()
         
         case EControlPanelWidgetType::GLOW_BUTTON:
             bIsEffectActive = GetGlow();
+            break;
+        
+        case EControlPanelWidgetType::TIME_BUTTON:
+            bIsEffectActive = GetTime();
             break;
     }
 
@@ -290,4 +298,21 @@ void UControlPanelWidget::SetGlow(bool bIsEnabled)
     }
 
     DynamicMaterialInstance->SetScalarParameterValue(FName(TEXT("Glow")), NewGlow);    
+}
+
+bool UControlPanelWidget::GetTime()
+{
+    return GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() == EffectScale;
+}
+
+void UControlPanelWidget::SetTime(bool bIsEnabled)
+{
+    float NewTimeDilation = 1.f;
+
+    if(bIsEnabled)
+    {
+        NewTimeDilation = EffectScale;
+    }
+
+    GetWorld()->GetWorldSettings()->SetTimeDilation(NewTimeDilation);
 }

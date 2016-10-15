@@ -13,7 +13,9 @@ enum class EControlPanelWidgetType : uint8
     ROTATION_BUTTON         UMETA(DisplayName="Rotation Button"),
     TRANSLATION_BUTTON      UMETA(DisplayName="Translation Button"),
     SCALE_BUTTON            UMETA(DisplayName="Scale Button"),
-    GLOW_BUTTON             UMETA(DisplayName="Glow Button")
+    GLOW_BUTTON             UMETA(DisplayName="Glow Button"),
+    TIME_BUTTON             UMETA(DisplayName="Time Button"),
+    GLOBAL_GRAVITY_BUTTON   UMETA(DisplayName="Global Gravity Button")
 };
 
 
@@ -72,6 +74,26 @@ public:
      * Set glow state
      */
     void SetGlow(bool bIsEnabled);
+    
+    /**
+     * Get global gravity state
+     */
+    bool GetGlobalGravity();
+
+    /**
+     * Set global gravity state
+     */
+    void SetGlobalGravity(bool bIsEnabled);
+    
+    /**
+     * Get time state
+     */
+    bool GetTime();
+
+    /**
+     * Set time state
+     */
+    void SetTime(bool bIsEnabled);
     
     /**
      * Initialises a widget

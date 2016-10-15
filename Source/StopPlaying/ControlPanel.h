@@ -19,9 +19,6 @@ public:
 
 private:
     UPROPERTY(EditAnywhere)
-    bool bConnectedActorIsWorld = false;
-
-    UPROPERTY(EditAnywhere)
     AActor* ConnectedActor = nullptr;
 
     // These will be automatically assigned
