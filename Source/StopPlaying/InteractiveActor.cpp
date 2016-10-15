@@ -1,8 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "StopPlaying.h"
 #include "InteractiveActor.h"
-
 
 // Sets default values
 AInteractiveActor::AInteractiveActor()
@@ -16,7 +13,10 @@ AInteractiveActor::AInteractiveActor()
 void AInteractiveActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+    InitialPosition = GetActorLocation();
+    InitialRotation = GetActorRotation();
+    InitialScale = GetActorRelativeScale3D();    
 }
 
 // Called every frame
@@ -26,10 +26,26 @@ void AInteractiveActor::Tick( float DeltaTime )
 
 }
 
-/**
- * Interacting with this actor
- */
-void  AInteractiveActor::Interact(APawn* InteractingPawn)
+void AInteractiveActor::Interact(APawn* InteractingPawn)
 {
     OnInteraction.Broadcast(InteractingPawn);
+}
+
+void AInteractiveActor::Reset()
+{
+    UE_LOG(LogTemp, Warning, TEXT("%s was reset"), *GetName());
+
+    FVector Zero;
+
+    UMeshComponent* MeshComponent = FindComponentByClass<UMeshComponent>();
+
+    if(MeshComponent)
+    {
+        MeshComponent->SetPhysicsLinearVelocity(Zero);
+        MeshComponent->SetPhysicsAngularVelocity(Zero);
+    }
+    
+    SetActorLocation(InitialPosition);
+    SetActorRotation(InitialRotation);
+    SetActorRelativeScale3D(InitialScale);
 }

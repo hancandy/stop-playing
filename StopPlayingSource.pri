@@ -6002,6 +6002,7 @@ SOURCES += \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelWidget.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayer.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActor.cpp" \
+	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActorKillVolume.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/StopPlaying.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/StopPlayingGameMode.cpp" \
  

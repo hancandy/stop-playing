@@ -13,13 +13,8 @@ class STOPPLAYING_API AInteractiveActor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	AInteractiveActor();
-
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
-	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
     UPROPERTY(EditAnywhere)
@@ -28,11 +23,22 @@ public:
     UPROPERTY(EditAnywhere)
     FString InteractionMessage = "Interact";
 
-    void Interact(APawn* InteractingPawn);
-    
     UPROPERTY(BlueprintAssignable, Category="InteractiveActor")
     FOnInteraction OnInteraction;
 	
+    /**
+     * Interacts with this actor
+     */
+    void Interact(APawn* InteractingPawn);
+   
+    /**
+     * Resets this actor's transform
+     */
+    void Reset();
+
 private:
+    FVector InitialPosition;
+    FRotator InitialRotation;
+    FVector InitialScale;
 
 };

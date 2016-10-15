@@ -6013,6 +6013,7 @@ set(SOURCE_FILES
 	"${GAME_ROOT_PATH}/Source/StopPlaying/ControlPanelWidget.cpp"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/DefaultPlayer.cpp"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/InteractiveActor.cpp"
+	"${GAME_ROOT_PATH}/Source/StopPlaying/InteractiveActorKillVolume.cpp"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/StopPlaying.cpp"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/StopPlayingGameMode.cpp"
  )
@@ -14016,6 +14017,7 @@ set(HEADER_FILES
 	"${GAME_ROOT_PATH}/Source/StopPlaying/ControlPanelWidget.h"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/DefaultPlayer.h"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/InteractiveActor.h"
+	"${GAME_ROOT_PATH}/Source/StopPlaying/InteractiveActorKillVolume.h"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/StopPlaying.h"
 	"${GAME_ROOT_PATH}/Source/StopPlaying/StopPlayingGameMode.h"
  )
