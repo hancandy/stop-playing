@@ -315,4 +315,7 @@ void UControlPanelWidget::SetTime(bool bIsEnabled)
     }
 
     GetWorld()->GetWorldSettings()->SetTimeDilation(NewTimeDilation);
+
+    GetWorld()->GetFirstPlayerController()->CustomTimeDilation = 1.f / NewTimeDilation;
+    UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->CustomTimeDilation = 1.f / NewTimeDilation;
 }
