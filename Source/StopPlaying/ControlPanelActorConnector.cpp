@@ -11,7 +11,7 @@ void UControlPanelActorConnector::OnInteract(APawn* InteractingPawn)
 
     if(!ParentControlPanel) { return; }
     
-    ParentControlPanel->SetConnectedActor(ConnectedActor);
+    ParentControlPanel->SetConnectedActor(ConnectedActor, InitialTransform);
 }
 
 void UControlPanelActorConnector::Init()
@@ -19,7 +19,8 @@ void UControlPanelActorConnector::Init()
     Super::Init();
 
     if(!ConnectedActor) { return; }
-    if(!GetInteractiveActor()) { return; }
+
+    InitialTransform = ConnectedActor->GetTransform();   
 
     SetLabel(ConnectedActor->GetName());
 }

@@ -26,13 +26,15 @@ AInteractiveActor* UControlPanelWidget::GetInteractiveActor()
     return Cast<AInteractiveActor>(GetChildActor());
 }
 
-void UControlPanelWidget::SetLabel(FText NewText)
+void UControlPanelWidget::SetLabel(FString NewString)
 {
+    if(!GetInteractiveActor()) { return; }
+
     UTextRenderComponent* TextRenderComponent = GetInteractiveActor()->FindComponentByClass<UTextRenderComponent>();
 
     if(!TextRenderComponent) { return; }
 
-    TextRenderComponent->SetText(NewText);
+    TextRenderComponent->SetText(FText::FromString(NewString));
 }
 
 void UControlPanelWidget::OnInteract(APawn* InteractingPawn)

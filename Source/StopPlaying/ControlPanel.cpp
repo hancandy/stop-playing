@@ -13,6 +13,8 @@ void AControlPanel::BeginPlay()
     InitAllWidgets();
     
     SetTitle();
+
+    UpdateAllWidgets();
 }
 
 void AControlPanel::Tick( float DeltaTime )
@@ -21,51 +23,60 @@ void AControlPanel::Tick( float DeltaTime )
 
     if(!ConnectedActor) { return; }
 
-/*
-    FVector NewVector = InitialPosition;
-    FVector NewScale = InitialScale;
-
-    switch(Type)
+    if(TranslationTimer > 0.f)
     {
-        case EControlPanelButtonType::ROTATION:
-            if(bIsEffectActive)
-            {
-                FRotator NewRotator = ConnectedActor->GetActorRotation();
-
-                NewRotator.Yaw += 50.f * EffectScale * DeltaTime;
-
-                ConnectedActor->SetActorRelativeRotation(NewRotator);
-            }
-            break;   
-
-        case EControlPanelButtonType::TRANSLATION:
-            if(bIsEffectActive)
-            {
-                NewVector += InitialDirection * 100.f * EffectScale;                
-            }
-
-            NewVector = FMath::Lerp(ConnectedActor->GetActorLocation(), NewVector, DeltaTime * 5.f * EffectScale);
-
-            ConnectedActor->SetActorLocation(NewVector);
-            break;     
-        
-        case EControlPanelButtonType::SCALE:
-            if(bIsEffectActive)
-            {
-                NewScale *= EffectScale;                
-            }
-
-            NewScale = FMath::Lerp(ConnectedActor->GetActorRelativeScale3D(), NewScale, DeltaTime * 5.f * EffectScale);
-
-            ConnectedActor->SetActorRelativeScale3D(NewScale);
-            break;
+        TickTranslationTimer(DeltaTime);
     }
-   */ 
+
+    if(RotationTimer > 0.f)
+    {
+        TickRotationTimer(DeltaTime);
+    }
+    
+    if(ScaleTimer > 0.f)
+    {
+        TickScaleTimer(DeltaTime);
+    }
 }
 
-void AControlPanel::SetConnectedActor(AActor* NewActor)
+void AControlPanel::TickTranslationTimer(float DeltaTime)
+{
+    if(!ConnectedActor) { return; } 
+
+    FVector NewLocation = FMath::Lerp(ConnectedActor->GetActorLocation(), TransformTarget.GetLocation(), 1.f - TranslationTimer);
+
+    ConnectedActor->SetActorLocation(NewLocation);  
+
+    TranslationTimer -= DeltaTime;
+}
+
+void AControlPanel::TickScaleTimer(float DeltaTime)
+{
+    if(!ConnectedActor) { return; } 
+
+    FVector NewScale = FMath::Lerp(ConnectedActor->GetActorRelativeScale3D(), TransformTarget.GetScale3D(), 1.f - ScaleTimer);
+
+    ConnectedActor->SetActorRelativeScale3D(NewScale);  
+
+    ScaleTimer -= DeltaTime;
+}
+
+void AControlPanel::TickRotationTimer(float DeltaTime)
+{
+    if(!ConnectedActor) { return; } 
+
+    FRotator NewRotation = FMath::Lerp(ConnectedActor->GetActorRotation(), TransformTarget.Rotator(), 1.f - RotationTimer);
+
+    ConnectedActor->SetActorRotation(NewRotation);  
+
+    RotationTimer -= DeltaTime;
+}
+
+void AControlPanel::SetConnectedActor(AActor* NewActor, FTransform NewTransform)
 {
     ConnectedActor = NewActor;
+    InitialTransform = NewTransform;
+    TransformTarget = ConnectedActor->GetTransform();
 
     UpdateAllWidgets();
 
@@ -110,7 +121,7 @@ void AControlPanel::InitAllWidgets()
     }
 }
 
-FText EffectTypeToString(EControlPanelEffectType EffectType)
+FString AControlPanel::EffectTypeToString(EControlPanelEffectType EffectType)
 {
     switch(EffectType)
     {
@@ -150,17 +161,23 @@ void AControlPanel::UpdateAllWidgets()
     {
         if(!Button) { continue; }
 
-        bool bIsEffectActive = IsEffectActive(Button->EffectType, Button->EffectScale);
+        bool bIsEffectActive = IsEffectActive(Button->EffectType);
+        FString NewLabel = EffectTypeToString(Button->EffectType);
 
-        if(bIsEffectActive)
+        if(!ConnectedActor)
         {
-            Button->SetLabel(EffectTypeToString(Button->EffectType) + ": ON");
+            NewLabel += ": N/A";
+        }
+        else if(bIsEffectActive)
+        {
+            NewLabel += ": ON";
         }
         else
         {
-            Button->SetLabel(EffectTypeToString(Button->EffectType) + ": OFF");
+            NewLabel += ": OFF";
         }
         
+        Button->SetLabel(NewLabel);
         Button->OnUpdateWidgetAppearance(bIsEffectActive);
     }
 }
@@ -208,10 +225,16 @@ void AControlPanel::SetEffectActive(EControlPanelEffectType Type, float EffectSc
         case EControlPanelEffectType::TIME:
             SetTime(bIsEffectActive, EffectScale);
             break;
+
+        case EControlPanelEffectType::TRANSLATION:
+            SetTranslation(bIsEffectActive, EffectScale);
+            break;
     }
+
+    UpdateAllWidgets();
 }
 
-bool AControlPanel::IsEffectActive(EControlPanelEffectType Type, float EffectScale)
+bool AControlPanel::IsEffectActive(EControlPanelEffectType Type)
 {
     bool bIsEffectActive = false;
 
@@ -226,7 +249,11 @@ bool AControlPanel::IsEffectActive(EControlPanelEffectType Type, float EffectSca
             break;
         
         case EControlPanelEffectType::TIME:
-            bIsEffectActive = GetTime(EffectScale);
+            bIsEffectActive = GetTime();
+            break;
+
+        case EControlPanelEffectType::TRANSLATION:
+            bIsEffectActive = GetTranslation();
             break;
     }
 
@@ -265,13 +292,17 @@ void AControlPanel::SetCollision(bool bIsEnabled)
     ConnectedActor->SetActorEnableCollision(bIsEnabled);
 }
 
-bool AControlPanel::GetTime(float EffectScale)
+bool AControlPanel::GetTime()
 {
-    return GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() == EffectScale;
+    if(!ConnectedActor) { return false; }
+
+    return ConnectedActor->CustomTimeDilation != 1.f;
 }
 
 void AControlPanel::SetTime(bool bIsEnabled, float EffectScale)
 {
+    if(!ConnectedActor) { return; }
+
     float NewTimeDilation = 1.f;
 
     if(bIsEnabled)
@@ -279,8 +310,69 @@ void AControlPanel::SetTime(bool bIsEnabled, float EffectScale)
         NewTimeDilation = EffectScale;
     }
 
-    GetWorld()->GetWorldSettings()->SetTimeDilation(NewTimeDilation);
+    ConnectedActor->CustomTimeDilation = NewTimeDilation;
+}
 
-    GetWorld()->GetFirstPlayerController()->CustomTimeDilation = 1.f / NewTimeDilation;
-    UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->CustomTimeDilation = 1.f / NewTimeDilation;
+void AControlPanel::SetTranslation(bool bIsEnabled, float EffectScale)
+{
+    TranslationTimer = 1.f;
+   
+    FVector InitialLocation = InitialTransform.GetLocation(); 
+    FVector InitialDirection = InitialTransform.GetRotation().GetForwardVector();
+
+    if(bIsEnabled)
+    {
+        InitialLocation += InitialDirection * EffectScale * 100.f;
+    }
+    
+    TransformTarget.SetLocation(InitialLocation);
+}
+
+bool AControlPanel::GetTranslation()
+{
+    if(!ConnectedActor) { return false; }
+
+    return TransformTarget.GetLocation() != InitialTransform.GetLocation();
+}
+
+void AControlPanel::SetRotation(bool bIsEnabled, float EffectScale)
+{
+    RotationTimer = 1.f;
+   
+    FRotator InitialRotation = InitialTransform.Rotator(); 
+
+    if(bIsEnabled)
+    {
+        InitialRotation.Yaw += EffectScale;
+    }
+    
+    TransformTarget.SetRotation(InitialRotation.Quaternion());
+}
+
+bool AControlPanel::GetRotation()
+{
+    if(!ConnectedActor) { return false; }
+
+    return TransformTarget.GetRotation() != InitialTransform.GetRotation();
+}
+
+void AControlPanel::SetScale(bool bIsEnabled, float EffectScale)
+{
+    ScaleTimer = 1.f;
+   
+    FVector InitialScale = InitialTransform.GetScale3D(); 
+
+    if(bIsEnabled)
+    {
+        InitialScale *= EffectScale;
+    }
+    
+    TransformTarget.SetScale3D(InitialScale);
+}
+
+bool AControlPanel::GetScale()
+{
+    if(!ConnectedActor) { return false; }
+
+    return TransformTarget.GetScale3D() != InitialTransform.GetScale3D();
 }

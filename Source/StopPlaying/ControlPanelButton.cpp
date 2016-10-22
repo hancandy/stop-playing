@@ -43,7 +43,7 @@ bool UControlPanelButton::IsEffectActive()
 
     if(!ParentControlPanel) { return false; }
 
-    return ParentControlPanel->IsEffectActive(EffectType, EffectScale);
+    return ParentControlPanel->IsEffectActive(EffectType);
 }
 
 // --------------------

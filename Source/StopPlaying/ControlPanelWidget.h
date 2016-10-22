@@ -20,6 +20,12 @@ public:
     virtual void OnInteract(APawn* InteractingPawn);
 
     /**
+     * Event: On update widget appearance
+     */
+    UFUNCTION(BlueprintImplementableEvent, Category = "ControlPanelWidget")
+    void OnUpdateWidgetAppearance(bool bWidgetIsActive);
+
+    /**
      * Initialises a widget
      */
     virtual void Init();
@@ -30,17 +36,11 @@ public:
     AInteractiveActor* GetInteractiveActor();
 
     /**
-     * Event: On update widget appearance
+     * Sets the label
      */
-    UFUNCTION(BlueprintImplementableEvent, Category = "ControlPanelWidget")
-    void OnUpdateWidgetAppearance(bool bWidgetIsActive);
+    void SetLabel(FString NewLabel);
 
 protected:
     AInteractiveActor* ChildActor = nullptr;
-
-    /**
-     * Sets the label
-     */
-    void SetLabel(FText NewLabel);
 
 };

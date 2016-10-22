@@ -28,7 +28,7 @@ public:
     /**
      * Gets abstract active state
      */
-    bool IsEffectActive(EControlPanelEffectType EffectType, float EffectScale);
+    bool IsEffectActive(EControlPanelEffectType EffectType);
 
     /**
      * Sets abstract active state
@@ -38,17 +38,38 @@ public:
     /**
      * Sets the connected actor
      */
-    void SetConnectedActor(AActor* NewActor);
+    void SetConnectedActor(AActor* NewActor, FTransform NewTransform);
 
 private:
-    UPROPERTY(EditAnywhere)
     AActor* ConnectedActor = nullptr;
-    
+    FTransform InitialTransform;
+
     // These will be automatically assigned
     UTextRenderComponent* TitleComponent = nullptr;
     TArray<UControlPanelActorConnector*> ActorConnectors;
     TArray<UControlPanelButton*> Buttons;
 
+    // Timed properties
+    FTransform TransformTarget;
+    float TranslationTimer = 0.f;
+    float RotationTimer = 0.f;
+    float ScaleTimer = 0.f;
+
+    /**
+     * Ticks the translation timer
+     */
+    void TickTranslationTimer(float DeltaTime);
+    
+    /**
+     * Ticks the scale timer
+     */
+    void TickScaleTimer(float DeltaTime);
+
+    /**
+     * Ticks the rotation timer
+     */
+    void TickRotationTimer(float DeltaTime);
+    
     /**
      * Initialises all widgets
      */
@@ -80,24 +101,44 @@ private:
     void SetCollision(bool bIsEnabled);
 
     /**
-     * Get global gravity state
-     */
-    bool GetGlobalGravity();
-
-    /**
-     * Set global gravity state
-     */
-    void SetGlobalGravity(bool bIsEnabled);
-    
-    /**
      * Get time state
      */
-    bool GetTime(float EffectScale);
+    bool GetTime();
 
     /**
      * Set time state
      */
     void SetTime(bool bIsEnabled, float EffectScale);
+   
+    /**
+     * Set translation state
+     */
+    void SetTranslation(bool bIsEnabled, float EffectScale);
+
+    /**
+     * Get translation state
+     */
+    bool GetTranslation();
+    
+    /**
+     * Set rotation state
+     */
+    void SetRotation(bool bIsEnabled, float EffectScale);
+
+    /**
+     * Get rotation state
+     */
+    bool GetRotation();
+    
+    /**
+     * Set scale state
+     */
+    void SetScale(bool bIsEnabled, float EffectScale);
+
+    /**
+     * Get scale state
+     */
+    bool GetScale();
     
     /**
      * Gets the mesh component of the connected actor
@@ -107,5 +148,5 @@ private:
     /**
      * Gets a string based on effect type
      */
-    FText EffectTypeToString(EControlPanelEffectType EffectType);
+    FString EffectTypeToString(EControlPanelEffectType EffectType);
 };
