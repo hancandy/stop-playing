@@ -10,13 +10,8 @@ void AControlPanel::BeginPlay()
 {
 	Super::BeginPlay();
 
-    if(!ConnectedActor) {
-        UE_LOG(LogTemp, Error, TEXT("%s has no connected actor"), *GetName());
-        return;
-    }
-    
     InitAllWidgets();
-
+    
     SetTitle();
 }
 
@@ -73,6 +68,8 @@ void AControlPanel::SetConnectedActor(AActor* NewActor)
     ConnectedActor = NewActor;
 
     UpdateAllWidgets();
+
+    SetTitle();
 }
 
 void AControlPanel::InitAllWidgets()
@@ -93,7 +90,14 @@ void AControlPanel::InitAllWidgets()
     }
 
     // Loop all actor pickers
-    //GetComponents(ActorPickers);
+    GetComponents(ActorConnectors);
+    
+    for(UControlPanelActorConnector* ActorConnector : ActorConnectors)
+    {
+        if(!ActorConnector) { return; }
+
+        ActorConnector->Init();
+    }
 
     // Loop all buttons
     GetComponents(Buttons);
@@ -108,12 +112,12 @@ void AControlPanel::InitAllWidgets()
 
 void AControlPanel::UpdateAllWidgets()
 {
-    //for(UControlPanelActorPicker* ActorPicker : ActorPickers)
-    //{
-    //    if(!ActorPicker) { continue; }
+    for(UControlPanelActorConnector* ActorConnector : ActorConnectors)
+    {
+        if(!ActorConnector) { continue; }
 
-    //    ActorPicker->OnUpdateWidgetAppearance(ActorPicker->ConnectedActor == ConnectedActor);
-    //}
+        ActorConnector->OnUpdateWidgetAppearance(ActorConnector->ConnectedActor == ConnectedActor);
+    }
 
     for(UControlPanelButton* Button : Buttons)
     {

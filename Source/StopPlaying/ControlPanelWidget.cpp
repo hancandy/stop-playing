@@ -10,7 +10,7 @@ UControlPanelWidget::UControlPanelWidget()
 void UControlPanelWidget::Init()
 {
     // Assign relevant actors
-    ChildActor = Cast<AInteractiveActor>(GetChildActor());
+    ChildActor = GetInteractiveActor();
             
     if(!ChildActor) {
         UE_LOG(LogTemp, Error, TEXT("%s has no child actor"), *GetName());

@@ -4,7 +4,7 @@
 
 #include "InteractiveActor.h"
 #include "ControlPanelButton.h"
-#include "ControlPanelActorPicker.h"
+#include "ControlPanelActorConnector.h"
 
 #include "GameFramework/Actor.h"
 #include "ControlPanel.generated.h"
@@ -46,7 +46,7 @@ private:
     
     // These will be automatically assigned
     UTextRenderComponent* TitleComponent = nullptr;
-//    TArray<UControlPanelActorPicker*> ActorPickers;
+    TArray<UControlPanelActorConnector*> ActorConnectors;
     TArray<UControlPanelButton*> Buttons;
 
     /**
