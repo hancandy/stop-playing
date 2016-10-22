@@ -21,9 +21,5 @@ void UControlPanelActorConnector::Init()
     if(!ConnectedActor) { return; }
     if(!GetInteractiveActor()) { return; }
 
-    UTextRenderComponent* TextRenderComponent = GetInteractiveActor()->FindComponentByClass<UTextRenderComponent>();
-
-    if(!TextRenderComponent) { return; }
-
-    TextRenderComponent->SetText(ConnectedActor->GetName());
+    SetLabel(ConnectedActor->GetName());
 }

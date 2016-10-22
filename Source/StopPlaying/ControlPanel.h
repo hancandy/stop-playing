@@ -103,4 +103,9 @@ private:
      * Gets the mesh component of the connected actor
      */
     UMeshComponent* GetMeshComponent();
+
+    /**
+     * Gets a string based on effect type
+     */
+    FText EffectTypeToString(EControlPanelEffectType EffectType);
 };

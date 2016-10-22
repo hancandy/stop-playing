@@ -38,4 +38,9 @@ public:
 protected:
     AInteractiveActor* ChildActor = nullptr;
 
+    /**
+     * Sets the label
+     */
+    void SetLabel(FText NewLabel);
+
 };

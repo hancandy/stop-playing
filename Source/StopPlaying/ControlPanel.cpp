@@ -110,6 +110,33 @@ void AControlPanel::InitAllWidgets()
     }
 }
 
+FText EffectTypeToString(EControlPanelEffectType EffectType)
+{
+    switch(EffectType)
+    {
+        case EControlPanelEffectType::GRAVITY:
+            return "Gravity";
+
+        case EControlPanelEffectType::COLLISION:
+            return "Collision";
+        
+        case EControlPanelEffectType::ROTATION:
+            return "Rotation";
+        
+        case EControlPanelEffectType::TRANSLATION:
+            return "Translation";
+        
+        case EControlPanelEffectType::SCALE:    
+            return "Scale";
+        
+        case EControlPanelEffectType::TIME:
+            return "Time";
+        
+    }
+
+    return "(None)";
+}
+
 void AControlPanel::UpdateAllWidgets()
 {
     for(UControlPanelActorConnector* ActorConnector : ActorConnectors)
@@ -123,7 +150,18 @@ void AControlPanel::UpdateAllWidgets()
     {
         if(!Button) { continue; }
 
-        Button->OnUpdateWidgetAppearance(IsEffectActive(Button->EffectType, Button->EffectScale));
+        bool bIsEffectActive = IsEffectActive(Button->EffectType, Button->EffectScale);
+
+        if(bIsEffectActive)
+        {
+            Button->SetLabel(EffectTypeToString(Button->EffectType) + ": ON");
+        }
+        else
+        {
+            Button->SetLabel(EffectTypeToString(Button->EffectType) + ": OFF");
+        }
+        
+        Button->OnUpdateWidgetAppearance(bIsEffectActive);
     }
 }
 
