@@ -269,15 +269,11 @@ void AControlPanel::SetCollision(bool bIsEnabled)
 
 bool AControlPanel::GetTime()
 {
-    if(!ConnectedActor) { return false; }
-
-    return ConnectedActor->CustomTimeDilation != 1.f;
+    return GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() != 1.f;
 }
 
 void AControlPanel::SetTime(bool bIsEnabled, float EffectScale)
 {
-    if(!ConnectedActor) { return; }
-
     float NewTimeDilation = 1.f;
 
     if(bIsEnabled)
@@ -285,7 +281,10 @@ void AControlPanel::SetTime(bool bIsEnabled, float EffectScale)
         NewTimeDilation = EffectScale;
     }
 
-    ConnectedActor->CustomTimeDilation = NewTimeDilation;
+    GetWorld()->GetWorldSettings()->SetTimeDilation(NewTimeDilation);
+
+    GetWorld()->GetFirstPlayerController()->CustomTimeDilation = 1.f / NewTimeDilation;
+    UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->CustomTimeDilation = 1.f / NewTimeDilation;
 }
 
 void AControlPanel::SetTranslation(bool bIsEnabled, float EffectScale)
