@@ -13,3 +13,17 @@ void UControlPanelActorConnector::OnInteract(APawn* InteractingPawn)
     
     ParentControlPanel->SetConnectedActor(ConnectedActor);
 }
+
+void UControlPanelActorConnector::Init()
+{
+    Super::Init();
+
+    if(!ConnectedActor) { return; }
+    if(!GetInteractiveActor()) { return; }
+
+    UTextRenderComponent* TextRenderComponent = GetInteractiveActor()->FindComponentByClass<UTextRenderComponent>();
+
+    if(!TextRenderComponent) { return; }
+
+    TextRenderComponent->SetText(ConnectedActor->GetName());
+}

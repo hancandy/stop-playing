@@ -13,7 +13,12 @@ class STOPPLAYING_API UControlPanelActorConnector : public UControlPanelWidget
 public:
     UPROPERTY(EditAnywhere)
     AActor* ConnectedActor = nullptr;    
-	
+
+    /**
+     * Initialises this widget
+     */
+    virtual void Init() override;
+
     /**
      * Event: On interact
      */

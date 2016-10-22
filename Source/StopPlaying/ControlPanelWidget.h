@@ -22,7 +22,7 @@ public:
     /**
      * Initialises a widget
      */
-    void Init();
+    virtual void Init();
 
     /**
      * Gets the AInteractiveActor
