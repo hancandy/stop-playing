@@ -145,8 +145,4 @@ private:
      */
     UMeshComponent* GetMeshComponent();
 
-    /**
-     * Gets a string based on effect type
-     */
-    FString EffectTypeToString(EControlPanelEffectType EffectType);
 };

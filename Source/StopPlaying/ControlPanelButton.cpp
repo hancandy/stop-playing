@@ -20,6 +20,52 @@ void UControlPanelButton::OnInteract(APawn* InteractingPawn)
     }
 }
 
+FString UControlPanelButton::GetEffectTypeString()
+{
+    switch(EffectType)
+    {
+        case EControlPanelEffectType::GRAVITY:
+            return "Gravity";
+
+        case EControlPanelEffectType::COLLISION:
+            return "Collision";
+        
+        case EControlPanelEffectType::ROTATION:
+            return "Rotation";
+        
+        case EControlPanelEffectType::TRANSLATION:
+            return "Translation";
+        
+        case EControlPanelEffectType::SCALE:    
+            return "Scale";
+        
+        case EControlPanelEffectType::TIME:
+            return "Time";
+        
+    }
+
+    return "(None)";
+}
+
+void UControlPanelButton::SetAppropriateLabel(FString Suffix)
+{
+    bool bIsEffectActive = IsEffectActive();
+    FString NewLabel = GetEffectTypeString();
+
+    if(bIsEffectActive)
+    {
+        NewLabel += ": ON";
+    }
+    else
+    {
+        NewLabel += ": OFF";
+    }
+    
+    NewLabel += Suffix;
+
+    SetLabel(NewLabel);
+}
+
 // --------------------
 // Effect functions
 // --------------------
@@ -56,11 +102,15 @@ void UControlPanelButton::StartTimer()
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UControlPanelButton::TickTimer, 1.f, true);
 
     Timer = Timeout;
+    
+    SetAppropriateLabel(" (" + FString::FromInt(Timer) + ")");
 }
 
 void UControlPanelButton::TickTimer()
 {
     Timer--;
+
+    SetAppropriateLabel(" (" + FString::FromInt(Timer) + ")");
 
     if(Timer <= 0)
     {
@@ -74,4 +124,6 @@ void UControlPanelButton::ResetTimer()
     GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 
     Timer = 0;
+
+    SetAppropriateLabel();
 }

@@ -23,6 +23,16 @@ public:
     UPROPERTY(EditAnywhere)
     float EffectScale = 1.f;
 
+    /**
+     * Gets a string based on effect type
+     */
+    FString GetEffectTypeString();
+
+    /**
+     * Sets the appropriate label
+     */
+    void SetAppropriateLabel(FString Suffix = "");
+
 protected:
     UPROPERTY(EditAnywhere)
     int32 Timeout = 0;
