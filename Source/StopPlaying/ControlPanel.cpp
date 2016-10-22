@@ -229,6 +229,14 @@ void AControlPanel::SetEffectActive(EControlPanelEffectType Type, float EffectSc
         case EControlPanelEffectType::TRANSLATION:
             SetTranslation(bIsEffectActive, EffectScale);
             break;
+        
+        case EControlPanelEffectType::ROTATION:
+            SetRotation(bIsEffectActive, EffectScale);
+            break;
+        
+        case EControlPanelEffectType::SCALE:
+            SetScale(bIsEffectActive, EffectScale);
+            break;
     }
 
     UpdateAllWidgets();
@@ -254,6 +262,14 @@ bool AControlPanel::IsEffectActive(EControlPanelEffectType Type)
 
         case EControlPanelEffectType::TRANSLATION:
             bIsEffectActive = GetTranslation();
+            break;
+        
+        case EControlPanelEffectType::ROTATION:
+            bIsEffectActive = GetRotation();
+            break;
+        
+        case EControlPanelEffectType::SCALE:
+            bIsEffectActive = GetScale();
             break;
     }
 
