@@ -7994,6 +7994,8 @@ HEADERS += \
 	"$$unrealRootPath/Engine/Plugins/Slate/SlateRemote/Source/SlateRemote/Private/Server/SlateRemoteServerMessage.h" \
 	"$$unrealRootPath/Engine/Plugins/Slate/SlateRemote/Source/SlateRemote/Private/Shared/SlateRemoteSettings.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanel.h" \
+	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelActorPicker.h" \
+	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelButton.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelWidget.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayer.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActor.h" \

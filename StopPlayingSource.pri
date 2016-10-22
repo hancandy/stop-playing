@@ -5999,6 +5999,8 @@ SOURCES += \
 	"$$unrealRootPath/Engine/Plugins/Slate/SlateRemote/Source/SlateRemote/Private/SlateRemoteModule.cpp" \
 	"$$unrealRootPath/Engine/Plugins/Slate/SlateRemote/Source/SlateRemote/Private/Server/SlateRemoteServer.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanel.cpp" \
+	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelActorPicker.cpp" \
+	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelButton.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelWidget.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayer.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActor.cpp" \
