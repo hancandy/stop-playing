@@ -31,7 +31,7 @@ public:
     /**
      * Sets the appropriate label
      */
-    void SetAppropriateLabel(FString Suffix = "");
+    void SetAppropriateLabel();
 
 protected:
     UPROPERTY(EditAnywhere)

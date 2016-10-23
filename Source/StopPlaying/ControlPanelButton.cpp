@@ -47,7 +47,7 @@ FString UControlPanelButton::GetEffectTypeString()
     return "(None)";
 }
 
-void UControlPanelButton::SetAppropriateLabel(FString Suffix)
+void UControlPanelButton::SetAppropriateLabel()
 {
     bool bIsEffectActive = IsEffectActive();
     FString NewLabel = GetEffectTypeString();
@@ -61,7 +61,10 @@ void UControlPanelButton::SetAppropriateLabel(FString Suffix)
         NewLabel += ": OFF";
     }
     
-    NewLabel += Suffix;
+    if(Timer > 0)
+    {
+        NewLabel += " (" + FString::FromInt(Timer) + ")";
+    }
 
     SetLabel(NewLabel);
 }
@@ -103,14 +106,14 @@ void UControlPanelButton::StartTimer()
 
     Timer = Timeout;
     
-    SetAppropriateLabel(" (" + FString::FromInt(Timer) + ")");
+    SetAppropriateLabel();
 }
 
 void UControlPanelButton::TickTimer()
 {
     Timer--;
 
-    SetAppropriateLabel(" (" + FString::FromInt(Timer) + ")");
+    SetAppropriateLabel();
 
     if(Timer <= 0)
     {
