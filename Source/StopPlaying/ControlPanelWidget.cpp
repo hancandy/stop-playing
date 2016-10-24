@@ -19,6 +19,12 @@ void UControlPanelWidget::Init()
     
     // Add interaction event
     ChildActor->OnInteraction.AddDynamic(this, &UControlPanelWidget::OnInteract);
+
+    // If hidden in game, make sure to disable collision
+    if(bHiddenInGame)
+    {
+        ChildActor->SetActorEnableCollision(false);
+    }
 }
 
 AInteractiveActor* UControlPanelWidget::GetInteractiveActor()

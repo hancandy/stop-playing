@@ -108,6 +108,11 @@ void AControlPanel::InitAllWidgets()
         if(!ActorConnector) { return; }
 
         ActorConnector->Init();
+
+        if(!ConnectedActor)
+        {
+            ConnectedActor = ActorConnector->ConnectedActor;
+        }
     }
 
     // Loop all buttons
