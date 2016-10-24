@@ -37,6 +37,16 @@ void AControlPanel::Tick( float DeltaTime )
     {
         TickScaleTimer(DeltaTime);
     }
+
+    if(UpdateWidgetsTimer <= 0.f)
+    {
+        UpdateAllWidgets();
+        UpdateWidgetsTimer = 0.5f;
+    }
+    else
+    {
+        UpdateWidgetsTimer -= DeltaTime;
+    }
 }
 
 void AControlPanel::TickTranslationTimer(float DeltaTime)
@@ -270,14 +280,37 @@ bool AControlPanel::GetCollision()
 {
     if(!ConnectedActor) { return false; }
 
-    return ConnectedActor->GetActorEnableCollision();
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(ConnectedActor->GetRootComponent());
+    
+    if(!PrimitiveComponent) {
+        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *ConnectedActor->GetName());
+        return false;
+    }
+
+    return PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
 }
 
 void AControlPanel::SetCollision(bool bIsEnabled)
 {
     if(!ConnectedActor) { return; }
 
-    ConnectedActor->SetActorEnableCollision(bIsEnabled);
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(ConnectedActor->GetRootComponent());
+    
+    if(!PrimitiveComponent) {
+        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *ConnectedActor->GetName());
+        return;
+    }
+
+    if(bIsEnabled)
+    {
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+    }
+    else
+    {
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
+    }
 }
 
 bool AControlPanel::GetWorldTime()

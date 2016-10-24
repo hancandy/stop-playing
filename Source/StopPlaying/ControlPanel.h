@@ -51,6 +51,7 @@ private:
 
     // Timed properties
     FTransform TransformTarget;
+    float UpdateWidgetsTimer = 0.f;
     float TranslationTimer = 0.f;
     float RotationTimer = 0.f;
     float ScaleTimer = 0.f;

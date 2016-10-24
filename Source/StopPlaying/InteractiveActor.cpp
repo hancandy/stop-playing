@@ -14,9 +14,25 @@ void AInteractiveActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-    InitialPosition = GetActorLocation();
-    InitialRotation = GetActorRotation();
-    InitialScale = GetActorRelativeScale3D();    
+    InitialTransform = GetTransform();
+
+    UMeshComponent* MeshComponent = FindComponentByClass<UMeshComponent>();
+
+    if(!MeshComponent) {
+        UE_LOG(LogTemp, Error, TEXT("%s doesn't have a UMeshComponent!"), *GetName());
+        return;
+    }
+
+    bInitialGravity = MeshComponent->IsGravityEnabled();
+    
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
+    
+    if(!PrimitiveComponent) {
+        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *GetName());
+        return;
+    }
+
+    bInitialCollision = PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
 }
 
 // Called every frame
@@ -35,19 +51,32 @@ void AInteractiveActor::Reset()
 {
     UE_LOG(LogTemp, Warning, TEXT("%s was reset"), *GetName());
 
+    SetActorTransform(InitialTransform);
+
     FVector Zero;
 
     UMeshComponent* MeshComponent = FindComponentByClass<UMeshComponent>();
 
-    if(MeshComponent)
-    {
-        MeshComponent->SetPhysicsLinearVelocity(Zero);
-        MeshComponent->SetPhysicsAngularVelocity(Zero);
-    }
+    if(!MeshComponent) { return; }
+   
+    MeshComponent->SetPhysicsLinearVelocity(Zero);
+    MeshComponent->SetPhysicsAngularVelocity(Zero);
+    MeshComponent->SetEnableGravity(bInitialGravity);
+
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
     
-    SetActorLocation(InitialPosition);
-    SetActorRotation(InitialRotation);
-    SetActorRelativeScale3D(InitialScale);
+    if(!PrimitiveComponent) { return; }
+    
+    if(bInitialCollision)
+    {
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+    }
+    else
+    {
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
+    }
 }
 
 void AInteractiveActor::Toggle(bool bIsEnabled)

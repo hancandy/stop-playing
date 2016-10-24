@@ -47,8 +47,8 @@ public:
     void Toggle(bool bIsEnabled);
 
 private:
-    FVector InitialPosition;
-    FRotator InitialRotation;
-    FVector InitialScale;
+    FTransform InitialTransform;
+    bool bInitialGravity = false;
+    bool bInitialCollision = false;
 
 };
