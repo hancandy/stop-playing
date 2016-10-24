@@ -109,9 +109,9 @@ void AControlPanel::InitAllWidgets()
 
         ActorConnector->Init();
 
-        if(!ConnectedActor)
+        if(!ConnectedActor && ActorConnector->ConnectedActor)
         {
-            ConnectedActor = ActorConnector->ConnectedActor;
+            SetConnectedActor(ActorConnector->ConnectedActor, ActorConnector->ConnectedActor->GetTransform());
         }
     }
 
