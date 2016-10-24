@@ -36,6 +36,9 @@ private:
     
     UPROPERTY(BlueprintAssignable, Category="DefaultPlayer")
     FOnInteractionPrompt OnInteractionPrompt;
+    
+    UPROPERTY(EditAnywhere)
+    float PushingPower = 10.f;
 
     // Components
     void CheckComponents();
@@ -50,6 +53,7 @@ private:
     void Jump();
 	
     // Interaction
+    void Push();
     void Interact();
     void StopInteract();
     void UpdateInteractionPrompt();

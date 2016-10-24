@@ -47,6 +47,7 @@ void ADefaultPlayer::SetupPlayerInputComponent(class UInputComponent* Input)
     Input->BindAxis("LookYaw", this, &ADefaultPlayer::LookYaw);
     
     // Hook up actions
+    Input->BindAction("Push", IE_Pressed, this, &ADefaultPlayer::Push);
     Input->BindAction("Jump", IE_Pressed, this, &ADefaultPlayer::Jump);
     Input->BindAction("Interact", IE_Pressed, this, &ADefaultPlayer::Interact);
     Input->BindAction("Interact", IE_Released, this, &ADefaultPlayer::StopInteract);
@@ -280,5 +281,34 @@ void ADefaultPlayer::StopInteract()
         if(!PhysicsHandle) { return; }
 
         PhysicsHandle->ReleaseComponent();
+    }
+}
+
+/**
+ * Pushes something in front of the player
+ */
+void ADefaultPlayer::Push()
+{
+    if(!PhysicsHandle) { return; }
+
+    if(PhysicsHandle->GrabbedComponent)
+    {
+        UPrimitiveComponent* GrabbedComponent = PhysicsHandle->GrabbedComponent;
+
+        PhysicsHandle->ReleaseComponent();
+
+        FVector Location;
+        FRotator Rotation;
+        
+        APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+        
+        if(!Controller) {
+            UE_LOG(LogTemp, Error, TEXT("First player controller could not be found"));
+            return;
+        }
+
+        Controller->GetPlayerViewPoint(Location, Rotation); 
+
+        GrabbedComponent->SetPhysicsLinearVelocity(Rotation.Vector() * PushingPower * 100.f);
     }
 }
