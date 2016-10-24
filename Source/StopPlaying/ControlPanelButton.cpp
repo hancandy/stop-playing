@@ -8,16 +8,6 @@ void UControlPanelButton::OnInteract(APawn* InteractingPawn)
     Super::OnInteract(InteractingPawn);
 
     ToggleEffect();
-
-    // Handle timer
-    if(Timer > 0)
-    {
-        ResetTimer();
-    }
-    else if(Timeout > 0)
-    {
-        StartTimer();
-    }
 }
 
 FString UControlPanelButton::GetEffectTypeString()
@@ -39,8 +29,11 @@ FString UControlPanelButton::GetEffectTypeString()
         case EControlPanelEffectType::SCALE:    
             return "Scale";
         
-        case EControlPanelEffectType::TIME:
+        case EControlPanelEffectType::WORLD_TIME:
             return "Time";
+        
+        case EControlPanelEffectType::WORLD_GRAVITY:
+            return "Gravity";
         
     }
 
@@ -61,11 +54,6 @@ void UControlPanelButton::SetAppropriateLabel()
         NewLabel += ": OFF";
     }
     
-    if(Timer > 0)
-    {
-        NewLabel += " (" + FString::FromInt(Timer) + ")";
-    }
-
     SetLabel(NewLabel);
 }
 
@@ -93,40 +81,4 @@ bool UControlPanelButton::IsEffectActive()
     if(!ParentControlPanel) { return false; }
 
     return ParentControlPanel->IsEffectActive(EffectType);
-}
-
-// --------------------
-// Timer functions
-// --------------------
-void UControlPanelButton::StartTimer()
-{
-    ResetTimer();
-
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UControlPanelButton::TickTimer, 1.f, true);
-
-    Timer = Timeout;
-    
-    SetAppropriateLabel();
-}
-
-void UControlPanelButton::TickTimer()
-{
-    Timer--;
-
-    SetAppropriateLabel();
-
-    if(Timer <= 0)
-    {
-        ResetTimer();
-        ToggleEffect();
-    }
-}
-
-void UControlPanelButton::ResetTimer()
-{
-    GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-
-    Timer = 0;
-
-    SetAppropriateLabel();
 }

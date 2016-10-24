@@ -46,3 +46,12 @@ void UControlPanelWidget::SetLabel(FString NewString)
 void UControlPanelWidget::OnInteract(APawn* InteractingPawn)
 {
 }
+
+void UControlPanelWidget::UpdateWidgetState(bool bIsEnabled)
+{
+    AInteractiveActor* InteractiveActor = GetInteractiveActor();
+
+    if(!InteractiveActor) { return; }
+
+    InteractiveActor->Toggle(bIsEnabled);
+}

@@ -20,10 +20,9 @@ public:
     virtual void OnInteract(APawn* InteractingPawn);
 
     /**
-     * Event: On update widget appearance
+     * Update widget state
      */
-    UFUNCTION(BlueprintImplementableEvent, Category = "ControlPanelWidget")
-    void OnUpdateWidgetAppearance(bool bWidgetIsActive);
+    void UpdateWidgetState(bool bWidgetIsActive);
 
     /**
      * Initialises a widget

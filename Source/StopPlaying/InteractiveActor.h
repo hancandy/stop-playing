@@ -6,6 +6,7 @@
 #include "InteractiveActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteraction, APawn*, InteractingPawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnToggle, bool, bIsEnabled);
 
 UCLASS()
 class STOPPLAYING_API AInteractiveActor : public AActor
@@ -25,6 +26,9 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category="InteractiveActor")
     FOnInteraction OnInteraction;
+    
+    UPROPERTY(BlueprintAssignable, Category="InteractiveActor")
+    FOnToggle OnToggle;
 	
     /**
      * Interacts with this actor
@@ -35,6 +39,12 @@ public:
      * Resets this actor's transform
      */
     void Reset();
+
+    /**
+     * Toggles a state on this actor
+     * The implmentation is up the the subclass
+     */
+    void Toggle(bool bIsEnabled);
 
 private:
     FVector InitialPosition;

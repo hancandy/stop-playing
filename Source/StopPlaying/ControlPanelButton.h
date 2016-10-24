@@ -34,12 +34,6 @@ public:
     void SetAppropriateLabel();
 
 protected:
-    UPROPERTY(EditAnywhere)
-    int32 Timeout = 0;
-
-    FTimerHandle TimerHandle;
-    int32 Timer = 0;
-
     /**
      * Toggles the effect on/off
      */
@@ -54,20 +48,5 @@ protected:
      * Gets the effect state
      */
     bool IsEffectActive();
-
-    /**
-     * Resets the timer
-     */
-    void ResetTimer();
-
-    /**
-     * Ticks the timer
-     */
-    void TickTimer();
-    
-    /**
-     * Starts the timer
-     */
-    void StartTimer();
 
 };

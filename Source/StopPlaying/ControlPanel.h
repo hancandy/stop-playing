@@ -101,14 +101,24 @@ private:
     void SetCollision(bool bIsEnabled);
 
     /**
-     * Get time state
+     * Get world time state
      */
-    bool GetTime();
+    bool GetWorldTime();
 
     /**
-     * Set time state
+     * Set world time state
      */
-    void SetTime(bool bIsEnabled, float EffectScale);
+    void SetWorldTime(bool bIsEnabled, float EffectScale);
+    
+    /**
+     * Get world gravity state
+     */
+    bool GetWorldGravity();
+
+    /**
+     * Set world gravity state
+     */
+    void SetWorldGravity(bool bIsEnabled, float EffectScale);
    
     /**
      * Set translation state

@@ -54,9 +54,9 @@ void AControlPanel::TickScaleTimer(float DeltaTime)
 {
     if(!ConnectedActor) { return; } 
 
-    FVector NewScale = FMath::Lerp(ConnectedActor->GetActorRelativeScale3D(), TransformTarget.GetScale3D(), 1.f - ScaleTimer);
+    FVector NewScale = FMath::Lerp(ConnectedActor->GetActorScale3D(), TransformTarget.GetScale3D(), 1.f - ScaleTimer);
 
-    ConnectedActor->SetActorRelativeScale3D(NewScale);  
+    ConnectedActor->SetActorScale3D(NewScale);  
 
     ScaleTimer -= DeltaTime;
 }
@@ -132,7 +132,7 @@ void AControlPanel::UpdateAllWidgets()
     {
         if(!ActorConnector) { continue; }
 
-        ActorConnector->OnUpdateWidgetAppearance(ActorConnector->ConnectedActor == ConnectedActor);
+        ActorConnector->UpdateWidgetState(ActorConnector->ConnectedActor == ConnectedActor);
     }
 
     for(UControlPanelButton* Button : Buttons)
@@ -142,7 +142,7 @@ void AControlPanel::UpdateAllWidgets()
         bool bIsEffectActive = IsEffectActive(Button->EffectType);
         
         Button->SetAppropriateLabel();
-        Button->OnUpdateWidgetAppearance(bIsEffectActive);
+        Button->UpdateWidgetState(bIsEffectActive);
     }
 }
 
@@ -152,11 +152,11 @@ void AControlPanel::SetTitle()
 
     if(ConnectedActor)
     {
-        Name = FText::FromString("Object: " + ConnectedActor->GetName());
+        Name = FText::FromString(ConnectedActor->GetName());
     }
     else
     {
-        Name = FText::FromString("Object: (NONE)");
+        Name = FText::FromString("(NONE)");
     }
 
     if(!TitleComponent) { return; }
@@ -186,8 +186,8 @@ void AControlPanel::SetEffectActive(EControlPanelEffectType Type, float EffectSc
             SetCollision(bIsEffectActive);
             break;
         
-        case EControlPanelEffectType::TIME:
-            SetTime(bIsEffectActive, EffectScale);
+        case EControlPanelEffectType::WORLD_TIME:
+            SetWorldTime(bIsEffectActive, EffectScale);
             break;
 
         case EControlPanelEffectType::TRANSLATION:
@@ -200,6 +200,10 @@ void AControlPanel::SetEffectActive(EControlPanelEffectType Type, float EffectSc
         
         case EControlPanelEffectType::SCALE:
             SetScale(bIsEffectActive, EffectScale);
+            break;
+        
+        case EControlPanelEffectType::WORLD_GRAVITY:
+            SetWorldGravity(bIsEffectActive, EffectScale);
             break;
     }
 
@@ -220,8 +224,8 @@ bool AControlPanel::IsEffectActive(EControlPanelEffectType Type)
             bIsEffectActive = GetCollision();
             break;
         
-        case EControlPanelEffectType::TIME:
-            bIsEffectActive = GetTime();
+        case EControlPanelEffectType::WORLD_TIME:
+            bIsEffectActive = GetWorldTime();
             break;
 
         case EControlPanelEffectType::TRANSLATION:
@@ -234,6 +238,10 @@ bool AControlPanel::IsEffectActive(EControlPanelEffectType Type)
         
         case EControlPanelEffectType::SCALE:
             bIsEffectActive = GetScale();
+            break;
+        
+        case EControlPanelEffectType::WORLD_GRAVITY:
+            bIsEffectActive = GetWorldGravity();
             break;
     }
 
@@ -272,12 +280,12 @@ void AControlPanel::SetCollision(bool bIsEnabled)
     ConnectedActor->SetActorEnableCollision(bIsEnabled);
 }
 
-bool AControlPanel::GetTime()
+bool AControlPanel::GetWorldTime()
 {
     return GetWorld()->GetWorldSettings()->GetEffectiveTimeDilation() != 1.f;
 }
 
-void AControlPanel::SetTime(bool bIsEnabled, float EffectScale)
+void AControlPanel::SetWorldTime(bool bIsEnabled, float EffectScale)
 {
     float NewTimeDilation = 1.f;
 
@@ -354,4 +362,33 @@ bool AControlPanel::GetScale()
     if(!ConnectedActor) { return false; }
 
     return TransformTarget.GetScale3D() != InitialTransform.GetScale3D();
+}
+
+bool AControlPanel::GetWorldGravity()
+{
+    UCharacterMovementComponent* CharacterMovementComponent = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->FindComponentByClass<UCharacterMovementComponent>();
+
+    if(CharacterMovementComponent)
+    {
+        return CharacterMovementComponent->GravityScale != 1.f;
+    }
+
+    return false;
+}
+
+void AControlPanel::SetWorldGravity(bool bIsEnabled, float EffectScale)
+{
+    UCharacterMovementComponent* CharacterMovementComponent = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->FindComponentByClass<UCharacterMovementComponent>();
+
+    float NewGravityScale = 1.f;
+
+    if(bIsEnabled)
+    {
+        NewGravityScale = EffectScale;
+    }
+
+    if(CharacterMovementComponent)
+    {
+        CharacterMovementComponent->GravityScale = NewGravityScale;
+    }
 }

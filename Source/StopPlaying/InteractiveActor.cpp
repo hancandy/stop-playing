@@ -49,3 +49,8 @@ void AInteractiveActor::Reset()
     SetActorRotation(InitialRotation);
     SetActorRelativeScale3D(InitialScale);
 }
+
+void AInteractiveActor::Toggle(bool bIsEnabled)
+{
+    OnToggle.Broadcast(bIsEnabled);
+}

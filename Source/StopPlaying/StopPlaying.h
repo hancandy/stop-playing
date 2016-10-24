@@ -12,6 +12,7 @@ enum class EControlPanelEffectType : uint8
     ROTATION         UMETA(DisplayName="Rotation"),
     TRANSLATION      UMETA(DisplayName="Translation"),
     SCALE            UMETA(DisplayName="Scale"),
-    TIME             UMETA(DisplayName="Time"),
+    WORLD_TIME       UMETA(DisplayName="World time"),
+    WORLD_GRAVITY    UMETA(DisplayName="World gravity")
 };
 
