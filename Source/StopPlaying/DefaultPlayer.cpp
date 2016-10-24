@@ -47,10 +47,10 @@ void ADefaultPlayer::SetupPlayerInputComponent(class UInputComponent* Input)
     Input->BindAxis("LookYaw", this, &ADefaultPlayer::LookYaw);
     
     // Hook up actions
-    Input->BindAction("Push", IE_Pressed, this, &ADefaultPlayer::Push);
     Input->BindAction("Jump", IE_Pressed, this, &ADefaultPlayer::Jump);
-    Input->BindAction("Interact", IE_Pressed, this, &ADefaultPlayer::Interact);
-    Input->BindAction("Interact", IE_Released, this, &ADefaultPlayer::StopInteract);
+    Input->BindAction("Push", IE_Pressed, this, &ADefaultPlayer::Push);
+    Input->BindAction("Grab", IE_Pressed, this, &ADefaultPlayer::Grab);
+    Input->BindAction("Grab", IE_Released, this, &ADefaultPlayer::StopGrab);
 }
 
 /**
@@ -224,64 +224,36 @@ void ADefaultPlayer::UpdateInteractionPrompt()
 }
 
 /**
- * Try to interact with any object within reach
+ * Try to grab any object within reach
  */
-void ADefaultPlayer::Interact()
+void ADefaultPlayer::Grab()
 {
-    if(bToggleInteraction)
+    AInteractiveActor* InteractiveActor = GetFirstInteractiveActorInReach();
+
+    if(InteractiveActor && InteractiveActor->bCanBeGrabbed)
     {
+        UPrimitiveComponent* ComponentToGrab = Cast<UPrimitiveComponent>(InteractiveActor->GetRootComponent());
+
         if(!PhysicsHandle) { return; }
 
-        if(PhysicsHandle->GrabbedComponent)
+        if(!ComponentToGrab)
         {
-            PhysicsHandle->ReleaseComponent();
+            UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent"), *InteractiveActor->GetName());
             return;
         }
-    }
 
-    AInteractiveActor* InteractiveActor = nullptr;
-    FHitResult LineTraceHit = GetFirstPhysicsBodyInReach();
-    AActor* ActorHit = LineTraceHit.GetActor();
-
-    if(ActorHit)
-    {
-        InteractiveActor = Cast<AInteractiveActor>(ActorHit);
-    }
-
-    if(InteractiveActor)
-    {
-        if(InteractiveActor->bCanBeGrabbed)
-        {
-            UPrimitiveComponent* ComponentToGrab = LineTraceHit.GetComponent();
-
-            if(!PhysicsHandle) { return; }
-
-            if(!ComponentToGrab)
-            {
-                UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent"), *InteractiveActor->GetName());
-                return;
-            }
-
-            PhysicsHandle->GrabComponent(ComponentToGrab, NAME_None, LineTraceHit.Location, true);
-        }
-        else
-        {
-            InteractiveActor->Interact(this);
-        }
+        PhysicsHandle->GrabComponent(ComponentToGrab, NAME_None, InteractiveActor->GetActorLocation(), true);
     }
 }
 
 /**
- * Stops the interaction
+ * Stops grabbing
  */
-void ADefaultPlayer::StopInteract()
+void ADefaultPlayer::StopGrab()
 {
-    if(!bToggleInteraction)
-    {
-        if(!PhysicsHandle) { return; }
+    if(!PhysicsHandle) { return; }
 
-        PhysicsHandle->ReleaseComponent();
-    }
+    PhysicsHandle->ReleaseComponent();
 }
 
 /**
@@ -291,6 +263,7 @@ void ADefaultPlayer::Push()
 {
     if(!PhysicsHandle) { return; }
 
+    // First check for grabbed object
     if(PhysicsHandle->GrabbedComponent)
     {
         UPrimitiveComponent* GrabbedComponent = PhysicsHandle->GrabbedComponent;
@@ -310,5 +283,15 @@ void ADefaultPlayer::Push()
         Controller->GetPlayerViewPoint(Location, Rotation); 
 
         GrabbedComponent->SetPhysicsLinearVelocity(Rotation.Vector() * PushingPower * 100.f);
+        
+        return;
+    }
+
+    // Invoke interaction
+    AInteractiveActor* InteractiveActor = GetFirstInteractiveActorInReach();
+
+    if(InteractiveActor && !InteractiveActor->bCanBeGrabbed)
+    {
+        InteractiveActor->Interact(this);
     }
 }

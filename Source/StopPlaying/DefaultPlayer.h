@@ -29,9 +29,6 @@ public:
 
 private:
     UPROPERTY(EditAnywhere)
-    bool bToggleInteraction = false;
-    
-    UPROPERTY(EditAnywhere)
     float LineTraceLength = 200.f;
     
     UPROPERTY(BlueprintAssignable, Category="DefaultPlayer")
@@ -54,8 +51,8 @@ private:
 	
     // Interaction
     void Push();
-    void Interact();
-    void StopInteract();
+    void Grab();
+    void StopGrab();
     void UpdateInteractionPrompt();
     void UpdateGrabbedComponent();
     void GetLineTrace(FVector& Begin, FVector& End);
