@@ -6003,8 +6003,11 @@ SOURCES += \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelButton.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelWidget.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayer.cpp" \
+	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayerMovementComponent.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActor.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActorKillVolume.cpp" \
+	"$$StopPlayingRootPath/Source/StopPlaying/NinjaCharacter.cpp" \
+	"$$StopPlayingRootPath/Source/StopPlaying/NinjaCharacterMovementComponent.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/StopPlaying.cpp" \
 	"$$StopPlayingRootPath/Source/StopPlaying/StopPlayingGameMode.cpp" \
  

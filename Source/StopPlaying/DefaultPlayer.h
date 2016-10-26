@@ -3,6 +3,7 @@
 #pragma once
 
 #include "InteractiveActor.h"
+#include "NinjaCharacter.h"
 
 #include "GameFramework/Character.h"
 #include "DefaultPlayer.generated.h"
@@ -10,14 +11,11 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionPrompt, FString, Message);
 
 UCLASS()
-class STOPPLAYING_API ADefaultPlayer : public ACharacter
+class STOPPLAYING_API ADefaultPlayer : public ANinjaCharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
-	ADefaultPlayer();
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
@@ -26,6 +24,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+
+    void SetGravityScale(float NewGravityScale);
+    float GetGravityScale();
 
 private:
     UPROPERTY(EditAnywhere)
@@ -43,11 +44,8 @@ private:
     UPhysicsHandleComponent* PhysicsHandle;
 
     // Locomotion
-    void MoveForward(float AxisValue);
-    void MoveRight(float AxisValue);
     void LookPitch(float AxisValue);
     void LookYaw(float AxisValue);
-    void Jump();
 	
     // Interaction
     void Push();

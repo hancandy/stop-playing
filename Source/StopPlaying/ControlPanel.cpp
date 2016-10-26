@@ -1,5 +1,6 @@
 #include "StopPlaying.h"
 #include "ControlPanel.h"
+#include "DefaultPlayer.h"
 
 AControlPanel::AControlPanel()
 {
@@ -399,11 +400,11 @@ bool AControlPanel::GetScale()
 
 bool AControlPanel::GetWorldGravity()
 {
-    UCharacterMovementComponent* CharacterMovementComponent = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->FindComponentByClass<UCharacterMovementComponent>();
+    ADefaultPlayer* DefaultPlayer = Cast<ADefaultPlayer>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
-    if(CharacterMovementComponent)
+    if(DefaultPlayer)
     {
-        return CharacterMovementComponent->GravityScale != 1.f;
+        return DefaultPlayer->GetGravityScale() != 1.f;
     }
 
     return false;
@@ -411,7 +412,7 @@ bool AControlPanel::GetWorldGravity()
 
 void AControlPanel::SetWorldGravity(bool bIsEnabled, float EffectScale)
 {
-    UCharacterMovementComponent* CharacterMovementComponent = UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->FindComponentByClass<UCharacterMovementComponent>();
+    ADefaultPlayer* DefaultPlayer = Cast<ADefaultPlayer>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
     float NewGravityScale = 1.f;
 
@@ -420,8 +421,8 @@ void AControlPanel::SetWorldGravity(bool bIsEnabled, float EffectScale)
         NewGravityScale = EffectScale;
     }
 
-    if(CharacterMovementComponent)
+    if(DefaultPlayer)
     {
-        CharacterMovementComponent->GravityScale = NewGravityScale;
+        DefaultPlayer->SetGravityScale(NewGravityScale);
     }
 }

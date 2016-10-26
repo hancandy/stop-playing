@@ -1,15 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "StopPlaying.h"
 #include "DefaultPlayer.h"
 
-// Sets default values
-ADefaultPlayer::ADefaultPlayer()
-{
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-}
+#include "NinjaCharacterMovementComponent.h"
 
 // Called when the game starts or when spawned
 void ADefaultPlayer::BeginPlay()
@@ -54,7 +46,7 @@ void ADefaultPlayer::SetupPlayerInputComponent(class UInputComponent* Input)
 }
 
 /**
- * Sets up al needed components
+ * Sets up all needed components
  */
 void ADefaultPlayer::CheckComponents()
 {
@@ -64,22 +56,6 @@ void ADefaultPlayer::CheckComponents()
     {
         UE_LOG(LogTemp, Error, TEXT("%s has no UPhysicsHandleComponent"), *GetName());
     }
-}
-
-/**
- * Moves the player forward or backward
- */
-void ADefaultPlayer::MoveForward(float AxisValue)
-{
-    AddMovementInput(GetActorForwardVector() * AxisValue);
-}
-
-/**
- * Moves the player right or left
- */
-void ADefaultPlayer::MoveRight(float AxisValue)
-{
-    AddMovementInput(GetActorRightVector() * AxisValue);
 }
 
 /**
@@ -96,21 +72,6 @@ void ADefaultPlayer::LookPitch(float AxisValue)
 void ADefaultPlayer::LookYaw(float AxisValue)
 {
     AddControllerYawInput(AxisValue);
-}
-
-/**
- * Performs a jump
- */
-void ADefaultPlayer::Jump()
-{
-    UCharacterMovementComponent* CharacterMovementComponent = FindComponentByClass<UCharacterMovementComponent>();
-    
-    if(!CharacterMovementComponent) { return; }
-
-    if(CharacterMovementComponent->IsMovingOnGround())
-    {
-        CharacterMovementComponent->DoJump(false);
-    }
 }
 
 /**
@@ -294,4 +255,30 @@ void ADefaultPlayer::Push()
     {
         InteractiveActor->Interact(this);
     }
+}
+
+/**
+ * Sets the gravity scale
+ */
+void ADefaultPlayer::SetGravityScale(float NewGravityScale)
+{
+    UNinjaCharacterMovementComponent* MovementComponent = FindComponentByClass<UNinjaCharacterMovementComponent>();
+
+    if(!MovementComponent) { return; }
+
+    MovementComponent->SetGravityDirection(FVector(0.f, 0.f, -NewGravityScale));
+
+    UE_LOG(LogTemp, Warning, TEXT("New gravity direction: %s"), *MovementComponent->GetGravityDirection().ToString());
+}
+
+/**
+ * Gets the gravity scale 
+ */
+float ADefaultPlayer::GetGravityScale()
+{
+    UNinjaCharacterMovementComponent* MovementComponent = FindComponentByClass<UNinjaCharacterMovementComponent>();
+
+    if(!MovementComponent) { return 1.f; }
+    
+    return -MovementComponent->GetGravityDirection().Z;
 }

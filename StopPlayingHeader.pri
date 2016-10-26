@@ -7998,8 +7998,11 @@ HEADERS += \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelButton.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/ControlPanelWidget.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayer.h" \
+	"$$StopPlayingRootPath/Source/StopPlaying/DefaultPlayerMovementComponent.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActor.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/InteractiveActorKillVolume.h" \
+	"$$StopPlayingRootPath/Source/StopPlaying/NinjaCharacter.h" \
+	"$$StopPlayingRootPath/Source/StopPlaying/NinjaCharacterMovementComponent.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/StopPlaying.h" \
 	"$$StopPlayingRootPath/Source/StopPlaying/StopPlayingGameMode.h" \
  
