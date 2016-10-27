@@ -25,8 +25,8 @@ void ANinjaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Set up gameplay key bindings.
-	PlayerInputComponent->BindAxis(*MoveForwardAxisName, this, &ANinjaCharacter::MoveForward);
-	PlayerInputComponent->BindAxis(*MoveRightAxisName, this, &ANinjaCharacter::MoveRight);
+	// PlayerInputComponent->BindAxis(*MoveForwardAxisName, this, &ANinjaCharacter::MoveForward);
+	// PlayerInputComponent->BindAxis(*MoveRightAxisName, this, &ANinjaCharacter::MoveRight);
 }
 
 void ANinjaCharacter::ApplyDamageMomentum(float DamageTaken, const FDamageEvent& DamageEvent, APawn* PawnInstigator, AActor* DamageCauser)
