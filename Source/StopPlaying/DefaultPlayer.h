@@ -9,6 +9,7 @@
 #include "DefaultPlayer.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteractionPrompt, FString, Message);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSetGravityScale, float, NewGravityScale);
 
 UCLASS()
 class STOPPLAYING_API ADefaultPlayer : public ANinjaCharacter
@@ -34,6 +35,9 @@ private:
     
     UPROPERTY(BlueprintAssignable, Category="DefaultPlayer")
     FOnInteractionPrompt OnInteractionPrompt;
+    
+    UPROPERTY(BlueprintAssignable, Category="DefaultPlayer")
+    FOnSetGravityScale OnSetGravityScale;
     
     UPROPERTY(EditAnywhere)
     float PushingPower = 10.f;

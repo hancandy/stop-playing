@@ -63,7 +63,14 @@ void ADefaultPlayer::CheckComponents()
  */
 void ADefaultPlayer::LookPitch(float AxisValue)
 {
-    AddControllerPitchInput(AxisValue);
+    if(GetGravityScale() < 0.f)
+    {
+        AddControllerPitchInput(-AxisValue);
+    }
+    else
+    {
+        AddControllerPitchInput(AxisValue);
+    }
 }
 
 /**
@@ -71,7 +78,14 @@ void ADefaultPlayer::LookPitch(float AxisValue)
  */
 void ADefaultPlayer::LookYaw(float AxisValue)
 {
-    AddControllerYawInput(AxisValue);
+    if(GetGravityScale() < 0.f)
+    {
+        AddControllerYawInput(-AxisValue);
+    }
+    else
+    {
+        AddControllerYawInput(AxisValue);
+    }
 }
 
 /**
@@ -265,10 +279,10 @@ void ADefaultPlayer::SetGravityScale(float NewGravityScale)
     UNinjaCharacterMovementComponent* MovementComponent = FindComponentByClass<UNinjaCharacterMovementComponent>();
 
     if(!MovementComponent) { return; }
+    
+    MovementComponent->GravityScale = FMath::Abs(NewGravityScale);
 
-    MovementComponent->SetGravityDirection(FVector(0.f, 0.f, -NewGravityScale));
-
-    UE_LOG(LogTemp, Warning, TEXT("New gravity direction: %s"), *MovementComponent->GetGravityDirection().ToString());
+    OnSetGravityScale.Broadcast(NewGravityScale);
 }
 
 /**

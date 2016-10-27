@@ -22,8 +22,6 @@ void AControlPanel::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-    if(!ConnectedActor) { return; }
-
     if(TranslationTimer > 0.f)
     {
         TickTranslationTimer(DeltaTime);
