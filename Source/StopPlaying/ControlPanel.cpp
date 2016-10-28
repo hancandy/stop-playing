@@ -83,9 +83,30 @@ void AControlPanel::TickRotationTimer(float DeltaTime)
 
 void AControlPanel::SetConnectedActor(AActor* NewActor, FTransform NewTransform)
 {
+    if(!NewActor) { return; }
+
+    AInteractiveActor* ConnectedInteractiveActor = nullptr;
+
+    if(ConnectedActor)
+    {
+        ConnectedInteractiveActor = Cast<AInteractiveActor>(ConnectedActor);
+        
+        if(ConnectedInteractiveActor)
+        {
+            ConnectedInteractiveActor->Toggle(false);
+        }
+    }
+
     ConnectedActor = NewActor;
     InitialTransform = NewTransform;
     TransformTarget = ConnectedActor->GetTransform();
+
+    ConnectedInteractiveActor = Cast<AInteractiveActor>(ConnectedActor);
+    
+    if(ConnectedInteractiveActor)
+    {
+        ConnectedInteractiveActor->Toggle(true);
+    }
 
     UpdateAllWidgets();
 

@@ -42,7 +42,7 @@ public:
 
     /**
      * Toggles a state on this actor
-     * The implmentation is up the the subclass
+     * The implmentation is up to the subclass
      */
     void Toggle(bool bIsEnabled);
 
