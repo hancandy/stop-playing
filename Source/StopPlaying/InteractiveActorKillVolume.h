@@ -6,7 +6,7 @@
 #include "InteractiveActorKillVolume.generated.h"
 
 UCLASS(Blueprintable)
-class STOPPLAYING_API AInteractiveActorKillVolume : public ATriggerVolume
+class STOPPLAYING_API AInteractiveActorKillVolume : public AActor
 {
 	GENERATED_BODY()
 	

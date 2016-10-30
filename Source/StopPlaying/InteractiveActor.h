@@ -1,15 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
+
+#include "EnvironmentActor.h"
 
 #include "GameFramework/Actor.h"
 #include "InteractiveActor.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInteraction, APawn*, InteractingPawn);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnToggle, bool, bIsEnabled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginReset);
 
 UCLASS()
-class STOPPLAYING_API AInteractiveActor : public AActor
+class STOPPLAYING_API AInteractiveActor : public AEnvironmentActor
 {
 	GENERATED_BODY()
 	
@@ -28,23 +28,23 @@ public:
     FOnInteraction OnInteraction;
     
     UPROPERTY(BlueprintAssignable, Category="InteractiveActor")
-    FOnToggle OnToggle;
-	
+    FOnBeginReset OnBeginReset;
+    
     /**
      * Interacts with this actor
      */
     void Interact(APawn* InteractingPawn);
    
     /**
-     * Resets this actor's transform
+     * Begins resetting this actor
      */
-    void Reset();
+    void BeginReset();
 
     /**
-     * Toggles a state on this actor
-     * The implmentation is up to the subclass
+     * Resets this actor
      */
-    void Toggle(bool bIsEnabled);
+    UFUNCTION(BlueprintCallable, Category="InteractiveActor")
+    void Reset();
 
 private:
     FTransform InitialTransform;

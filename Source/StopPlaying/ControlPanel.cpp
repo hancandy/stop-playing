@@ -81,32 +81,20 @@ void AControlPanel::TickRotationTimer(float DeltaTime)
     RotationTimer -= DeltaTime;
 }
 
-void AControlPanel::SetConnectedActor(AActor* NewActor, FTransform NewTransform)
+void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor, FTransform NewTransform)
 {
     if(!NewActor) { return; }
 
-    AInteractiveActor* ConnectedInteractiveActor = nullptr;
-
     if(ConnectedActor)
     {
-        ConnectedInteractiveActor = Cast<AInteractiveActor>(ConnectedActor);
-        
-        if(ConnectedInteractiveActor)
-        {
-            ConnectedInteractiveActor->Toggle(false);
-        }
+        ConnectedActor->Toggle(false);
     }
 
     ConnectedActor = NewActor;
     InitialTransform = NewTransform;
     TransformTarget = ConnectedActor->GetTransform();
 
-    ConnectedInteractiveActor = Cast<AInteractiveActor>(ConnectedActor);
-    
-    if(ConnectedInteractiveActor)
-    {
-        ConnectedInteractiveActor->Toggle(true);
-    }
+    ConnectedActor->Toggle(true);
 
     UpdateAllWidgets();
 
@@ -398,16 +386,42 @@ bool AControlPanel::GetRotation()
 
 void AControlPanel::SetScale(bool bIsEnabled, float EffectScale)
 {
+    if(!ConnectedActor) { return; }
+
     ScaleTimer = 1.f;
    
     FVector InitialScale = InitialTransform.GetScale3D(); 
+    FVector NewScale = InitialScale;
+    float NewMassScale = 1.f;
 
     if(bIsEnabled)
     {
-        InitialScale *= EffectScale;
+        if(!ConnectedActor->ConstrainScale.X)
+        {
+            NewScale.X *= EffectScale;
+            NewMassScale += EffectScale / 3;
+        }
+
+        if(!ConnectedActor->ConstrainScale.Y)
+        {
+            NewScale.Y *= EffectScale;
+            NewMassScale += EffectScale / 3;
+        }
+        
+        if(!ConnectedActor->ConstrainScale.Z)
+        {
+            NewScale.Z *= EffectScale;
+            NewMassScale += EffectScale / 3;
+        }
     }
     
-    TransformTarget.SetScale3D(InitialScale);
+    TransformTarget.SetScale3D(NewScale);
+
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(ConnectedActor->GetRootComponent());
+
+    if(!PrimitiveComponent) { return; }
+
+    PrimitiveComponent->SetMassScale(NAME_None, NewMassScale);
 }
 
 bool AControlPanel::GetScale()

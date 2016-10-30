@@ -1,6 +1,7 @@
 #include "StopPlaying.h"
 #include "InteractiveActorKillVolume.h"
 
+// Reset
 void AInteractiveActorKillVolume::NotifyActorBeginOverlap(AActor* OtherActor)
 {
     if(!OtherActor) { return; }
@@ -9,5 +10,5 @@ void AInteractiveActorKillVolume::NotifyActorBeginOverlap(AActor* OtherActor)
 
     if(!InteractiveActor) { return; }
 
-    InteractiveActor->Reset();
+    InteractiveActor->BeginReset();
 }

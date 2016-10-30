@@ -35,7 +35,6 @@ void AInteractiveActor::BeginPlay()
     bInitialCollision = PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
 }
 
-// Called every frame
 void AInteractiveActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
@@ -47,10 +46,13 @@ void AInteractiveActor::Interact(APawn* InteractingPawn)
     OnInteraction.Broadcast(InteractingPawn);
 }
 
+void AInteractiveActor::BeginReset()
+{
+    OnBeginReset.Broadcast();
+}
+
 void AInteractiveActor::Reset()
 {
-    UE_LOG(LogTemp, Warning, TEXT("%s was reset"), *GetName());
-
     SetActorTransform(InitialTransform);
 
     FVector Zero;
@@ -77,9 +79,7 @@ void AInteractiveActor::Reset()
         PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
         PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
     }
+
+    PrimitiveComponent->SetMassScale(NAME_None, 1.f);
 }
 
-void AInteractiveActor::Toggle(bool bIsEnabled)
-{
-    OnToggle.Broadcast(bIsEnabled);
-}

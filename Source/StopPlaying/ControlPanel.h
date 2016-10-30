@@ -2,7 +2,7 @@
 
 #include "StopPlaying.h"
 
-#include "InteractiveActor.h"
+#include "EnvironmentActor.h"
 #include "ControlPanelButton.h"
 #include "ControlPanelActorConnector.h"
 
@@ -38,10 +38,10 @@ public:
     /**
      * Sets the connected actor
      */
-    void SetConnectedActor(AActor* NewActor, FTransform NewTransform);
+    void SetConnectedActor(AEnvironmentActor* NewActor, FTransform NewTransform);
 
 private:
-    AActor* ConnectedActor = nullptr;
+    AEnvironmentActor* ConnectedActor = nullptr;
     FTransform InitialTransform;
 
     // These will be automatically assigned

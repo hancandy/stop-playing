@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "EnvironmentActor.h"
+
 #include "ControlPanelWidget.h"
 #include "ControlPanelActorConnector.generated.h"
 
@@ -12,7 +14,7 @@ class STOPPLAYING_API UControlPanelActorConnector : public UControlPanelWidget
 
 public:
     UPROPERTY(EditAnywhere)
-    AActor* ConnectedActor = nullptr;    
+    AEnvironmentActor* ConnectedActor = nullptr;    
 
     /**
      * Initialises this widget
