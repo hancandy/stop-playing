@@ -49,6 +49,8 @@ void AInteractiveActor::Interact(APawn* InteractingPawn)
 void AInteractiveActor::BeginReset()
 {
     OnBeginReset.Broadcast();
+
+    bResetting = true;
 }
 
 void AInteractiveActor::Reset()
@@ -81,5 +83,7 @@ void AInteractiveActor::Reset()
     }
 
     PrimitiveComponent->SetMassScale(NAME_None, 1.f);
+    
+    bResetting = false;
 }
 

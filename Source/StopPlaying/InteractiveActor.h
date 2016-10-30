@@ -29,7 +29,9 @@ public:
     
     UPROPERTY(BlueprintAssignable, Category="InteractiveActor")
     FOnBeginReset OnBeginReset;
-    
+   
+    bool bResetting = false;
+
     /**
      * Interacts with this actor
      */

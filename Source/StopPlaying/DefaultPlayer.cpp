@@ -124,6 +124,15 @@ void ADefaultPlayer::UpdateGrabbedComponent()
     if(PhysicsHandle->GrabbedComponent)
     {
         PhysicsHandle->SetTargetLocation(End);
+
+        AInteractiveActor* GrabbedInteractiveActor = Cast<AInteractiveActor>(PhysicsHandle->GrabbedComponent->GetOwner());
+
+        if(!GrabbedInteractiveActor) { return; }
+
+        if(GrabbedInteractiveActor->bResetting)
+        {
+            PhysicsHandle->ReleaseComponent();
+        }
     }
 }
 
