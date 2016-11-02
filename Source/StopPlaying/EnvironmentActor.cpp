@@ -17,12 +17,45 @@ void AEnvironmentActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    InitialTransform = GetTransform();
+    
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
+    
+    if(!PrimitiveComponent) {
+        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *GetName());
+        return;
+    }
+
+    bInitialCollision = PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
 }
 
 // Called every frame
 void AEnvironmentActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+}
+
+void AEnvironmentActor::Reset()
+{
+    SetActorTransform(InitialTransform);
+    
+    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
+    
+    if(!PrimitiveComponent) { return; }
+    
+    if(bInitialCollision)
+    {
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+    }
+    else
+    {
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+    }
 
 }
 

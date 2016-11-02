@@ -30,18 +30,36 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void Tick( float DeltaSeconds ) override;
+
+    UPROPERTY(EditAnywhere)
+    FString Name = "ActorName";
     
     UPROPERTY(EditAnywhere)
     FBoolVector ConstrainScale;
+    
+    UPROPERTY(EditAnywhere)
+    FBoolVector ConstrainRotation;
+    
+    UPROPERTY(EditAnywhere)
+    FBoolVector ConstrainTranslation;
 
     UPROPERTY(BlueprintAssignable)
     FOnToggle OnToggle;
 	
+    /**
+     * Resets this actor
+     */
+    UFUNCTION(BlueprintCallable, Category="EnvironmentActor")
+    virtual void Reset();
+
     /**
      * Toggles a state on this actor
      * The implmentation is up to the subclass
      */
     virtual void Toggle(bool bIsEnabled);
 
-        
+protected:
+    FTransform InitialTransform;
+    bool bInitialCollision = false;
+
 };
