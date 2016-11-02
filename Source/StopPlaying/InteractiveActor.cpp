@@ -14,8 +14,6 @@ void AInteractiveActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-    InitialTransform = GetTransform();
-
     UMeshComponent* MeshComponent = FindComponentByClass<UMeshComponent>();
 
     if(!MeshComponent) {
@@ -24,15 +22,6 @@ void AInteractiveActor::BeginPlay()
     }
 
     bInitialGravity = MeshComponent->IsGravityEnabled();
-    
-    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
-    
-    if(!PrimitiveComponent) {
-        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *GetName());
-        return;
-    }
-
-    bInitialCollision = PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
 }
 
 void AInteractiveActor::Tick( float DeltaTime )
@@ -55,8 +44,8 @@ void AInteractiveActor::BeginReset()
 
 void AInteractiveActor::Reset()
 {
-    SetActorTransform(InitialTransform);
-
+    Super::Reset();
+    
     FVector Zero;
 
     UMeshComponent* MeshComponent = FindComponentByClass<UMeshComponent>();
@@ -71,17 +60,6 @@ void AInteractiveActor::Reset()
     
     if(!PrimitiveComponent) { return; }
     
-    if(bInitialCollision)
-    {
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
-    }
-    else
-    {
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
-    }
-
     PrimitiveComponent->SetMassScale(NAME_None, 1.f);
     
     bResetting = false;

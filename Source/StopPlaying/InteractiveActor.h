@@ -45,12 +45,9 @@ public:
     /**
      * Resets this actor
      */
-    UFUNCTION(BlueprintCallable, Category="InteractiveActor")
-    void Reset();
+    virtual void Reset() override;
 
-private:
-    FTransform InitialTransform;
+protected:
     bool bInitialGravity = false;
-    bool bInitialCollision = false;
 
 };
