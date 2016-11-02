@@ -393,17 +393,17 @@ void AControlPanel::SetRotation(bool bIsEnabled, float EffectScale)
     {
         if(!ConnectedActor->ConstrainRotation.X)
         {
-            NewRotation.Pitch *= EffectScale;
+            NewRotation.Roll += EffectScale;
         }
 
         if(!ConnectedActor->ConstrainRotation.Y)
         {
-            NewRotation.Roll *= EffectScale;
+            NewRotation.Pitch += EffectScale;
         }
         
         if(!ConnectedActor->ConstrainRotation.Z)
         {
-            NewRotation.Yaw *= EffectScale;
+            NewRotation.Yaw += EffectScale;
         }
     }
     
