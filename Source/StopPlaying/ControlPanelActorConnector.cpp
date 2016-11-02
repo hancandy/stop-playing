@@ -22,5 +22,5 @@ void UControlPanelActorConnector::Init()
 
     InitialTransform = ConnectedActor->GetTransform();   
 
-    SetLabel(ConnectedActor->GetName());
+    SetLabel(ConnectedActor->Name);
 }

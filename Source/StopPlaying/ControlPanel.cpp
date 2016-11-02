@@ -170,7 +170,7 @@ void AControlPanel::SetTitle()
 
     if(ConnectedActor)
     {
-        Name = FText::FromString(ConnectedActor->GetName());
+        Name = FText::FromString(ConnectedActor->Name);
     }
     else
     {
@@ -313,11 +313,13 @@ void AControlPanel::SetCollision(bool bIsEnabled)
     {
         PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
         PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
     }
     else
     {
         PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
         PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
+        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     }
 }
 
@@ -346,14 +348,31 @@ void AControlPanel::SetTranslation(bool bIsEnabled, float EffectScale)
     TranslationTimer = 1.f;
    
     FVector InitialLocation = InitialTransform.GetLocation(); 
-    FVector InitialDirection = InitialTransform.GetRotation().GetForwardVector();
+    FVector NewLocation = InitialLocation;
+    
+    FVector ForwardDirection = FVector::ForwardVector;
+    FVector RightDirection = FVector::RightVector;
+    FVector UpDirection = FVector::UpVector;
 
     if(bIsEnabled)
     {
-        InitialLocation += InitialDirection * EffectScale * 100.f;
+        if(!ConnectedActor->ConstrainTranslation.X)
+        {
+            NewLocation += ForwardDirection * EffectScale * 100.f;
+        }
+
+        if(!ConnectedActor->ConstrainTranslation.Y)
+        {
+            NewLocation += RightDirection * EffectScale * 100.f;
+        }
+        
+        if(!ConnectedActor->ConstrainTranslation.Z)
+        {
+            NewLocation += UpDirection * EffectScale * 100.f;
+        }
     }
     
-    TransformTarget.SetLocation(InitialLocation);
+    TransformTarget.SetLocation(NewLocation);
 }
 
 bool AControlPanel::GetTranslation()
@@ -368,13 +387,27 @@ void AControlPanel::SetRotation(bool bIsEnabled, float EffectScale)
     RotationTimer = 1.f;
    
     FRotator InitialRotation = InitialTransform.Rotator(); 
+    FRotator NewRotation = InitialRotation;
 
     if(bIsEnabled)
     {
-        InitialRotation.Yaw += EffectScale;
+        if(!ConnectedActor->ConstrainRotation.X)
+        {
+            NewRotation.Pitch *= EffectScale;
+        }
+
+        if(!ConnectedActor->ConstrainRotation.Y)
+        {
+            NewRotation.Roll *= EffectScale;
+        }
+        
+        if(!ConnectedActor->ConstrainRotation.Z)
+        {
+            NewRotation.Yaw *= EffectScale;
+        }
     }
     
-    TransformTarget.SetRotation(InitialRotation.Quaternion());
+    TransformTarget.SetRotation(NewRotation.Quaternion());
 }
 
 bool AControlPanel::GetRotation()

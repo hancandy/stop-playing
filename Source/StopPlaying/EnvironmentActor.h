@@ -32,7 +32,16 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
     
     UPROPERTY(EditAnywhere)
+    FString Name = "ActorName";
+    
+    UPROPERTY(EditAnywhere)
     FBoolVector ConstrainScale;
+    
+    UPROPERTY(EditAnywhere)
+    FBoolVector ConstrainRotation;
+    
+    UPROPERTY(EditAnywhere)
+    FBoolVector ConstrainTranslation;
 
     UPROPERTY(BlueprintAssignable)
     FOnToggle OnToggle;
