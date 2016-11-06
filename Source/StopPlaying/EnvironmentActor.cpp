@@ -21,6 +21,24 @@ void AEnvironmentActor::BeginPlay()
     
     UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
     
+    if(!PrimitiveComponent)
+    {
+            TArray<USceneComponent*> SceneComponents;
+            
+            GetRootComponent()->GetChildrenComponents(true, SceneComponents);
+            
+            for(USceneComponent* SceneComponent : SceneComponents)
+            {
+                UPrimitiveComponent* ChildPrimitiveComponent = Cast<UPrimitiveComponent>(SceneComponent);
+                
+                if(ChildPrimitiveComponent)
+                {
+                    PrimitiveComponent = ChildPrimitiveComponent;
+                    break;
+                }
+            }
+    }
+    
     if(!PrimitiveComponent) {
         UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *GetName());
         return;
