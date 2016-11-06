@@ -98,14 +98,14 @@ void ADefaultPlayer::GetLineTrace(FVector& Begin, FVector& End)
     FVector Location;
     FRotator Rotation;
     
-    APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     
-    if(!Controller) {
+    if(!PlayerController) {
         UE_LOG(LogTemp, Error, TEXT("First player controller could not be found"));
         return;
     }
 
-    Controller->GetPlayerViewPoint(Location, Rotation); 
+    PlayerController->GetPlayerViewPoint(Location, Rotation); 
 
     Begin = Location;
     End = Begin + Rotation.Vector() * LineTraceLength;
@@ -257,14 +257,14 @@ void ADefaultPlayer::Push()
         FVector Location;
         FRotator Rotation;
         
-        APlayerController* Controller = GetWorld()->GetFirstPlayerController();
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
         
-        if(!Controller) {
+        if(!PlayerController) {
             UE_LOG(LogTemp, Error, TEXT("First player controller could not be found"));
             return;
         }
 
-        Controller->GetPlayerViewPoint(Location, Rotation); 
+        PlayerController->GetPlayerViewPoint(Location, Rotation); 
 
         GrabbedComponent->SetPhysicsLinearVelocity(Rotation.Vector() * PushingPower * 100.f);
         

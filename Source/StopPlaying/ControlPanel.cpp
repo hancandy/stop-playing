@@ -288,38 +288,76 @@ bool AControlPanel::GetCollision()
 {
     if(!ConnectedActor) { return false; }
 
-    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(ConnectedActor->GetRootComponent());
+     UMeshComponent* MeshComponent = ConnectedActor->FindComponentByClass<UMeshComponent>();
     
-    if(!PrimitiveComponent) {
-        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *ConnectedActor->GetName());
+    if(!MeshComponent)
+    {
+            TArray<USceneComponent*> SceneComponents;
+            
+            ConnectedActor->GetRootComponent()->GetChildrenComponents(true, SceneComponents);
+            
+            for(USceneComponent* SceneComponent : SceneComponents)
+            {
+                UMeshComponent* ChildMeshComponent = Cast<UMeshComponent>(SceneComponent);
+                
+                if(ChildMeshComponent)
+                {
+                    MeshComponent = ChildMeshComponent;
+                    break;
+                }
+            }
+    }
+    
+    if(!MeshComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s has no UMeshComponent!"), *ConnectedActor->GetName());
         return false;
     }
 
-    return PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
+    return MeshComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
 }
 
 void AControlPanel::SetCollision(bool bIsEnabled)
 {
     if(!ConnectedActor) { return; }
 
-    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(ConnectedActor->GetRootComponent());
+    UMeshComponent* MeshComponent = ConnectedActor->FindComponentByClass<UMeshComponent>();
     
-    if(!PrimitiveComponent) {
-        UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *ConnectedActor->GetName());
+    if(!MeshComponent)
+    {
+            TArray<USceneComponent*> SceneComponents;
+            
+            ConnectedActor->GetRootComponent()->GetChildrenComponents(true, SceneComponents);
+            
+            for(USceneComponent* SceneComponent : SceneComponents)
+            {
+                UMeshComponent* ChildMeshComponent = Cast<UMeshComponent>(SceneComponent);
+                
+                if(ChildMeshComponent)
+                {
+                    MeshComponent = ChildMeshComponent;
+                    break;
+                }
+            }
+    }
+    
+    if(!MeshComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s has no UMeshComponent!"), *ConnectedActor->GetName());
         return;
     }
 
     if(bIsEnabled)
     {
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+        MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
+        MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+        MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
     }
     else
     {
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+        MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
+        MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
+        MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     }
 }
 
