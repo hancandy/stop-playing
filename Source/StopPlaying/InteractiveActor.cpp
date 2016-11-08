@@ -50,7 +50,11 @@ void AInteractiveActor::Reset()
 
     UMeshComponent* MeshComponent = FindComponentByClass<UMeshComponent>();
 
-    if(!MeshComponent) { return; }
+    if(!MeshComponent)
+    {
+        UE_LOG(LogTemp, Error, TEXT("%s does not have a UMeshComponent"), *GetName());
+        return;
+    }
    
     MeshComponent->SetPhysicsLinearVelocity(Zero);
     MeshComponent->SetPhysicsAngularVelocity(Zero);
