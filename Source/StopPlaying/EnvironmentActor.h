@@ -50,7 +50,7 @@ public:
      * Resets this actor
      */
     UFUNCTION(BlueprintCallable, Category="EnvironmentActor")
-    virtual void Reset();
+    virtual void Reset(bool bShouldRepeat = false);
 
     /**
      * Toggles a state on this actor
@@ -60,6 +60,7 @@ public:
 
 protected:
     FTransform InitialTransform;
-    bool bInitialCollision = false;
+    TMap<ECollisionChannel, ECollisionResponse> InitialCollision;
+    int32 RepeatReset = 0;
 
 };

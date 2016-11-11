@@ -27,7 +27,6 @@ void AInteractiveActor::BeginPlay()
 void AInteractiveActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
 }
 
 void AInteractiveActor::Interact(APawn* InteractingPawn)
@@ -42,7 +41,7 @@ void AInteractiveActor::BeginReset()
     bResetting = true;
 }
 
-void AInteractiveActor::Reset()
+void AInteractiveActor::Reset(bool bShouldRepeat)
 {
     Super::Reset();
     

@@ -45,7 +45,7 @@ public:
     /**
      * Resets this actor
      */
-    virtual void Reset() override;
+    virtual void Reset(bool bShouldRepeat = false) override;
 
 protected:
     bool bInitialGravity = false;

@@ -43,8 +43,10 @@ void AEnvironmentActor::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("%s has no UPrimitiveComponent!"), *GetName());
         return;
     }
-
-    bInitialCollision = PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody) == ECollisionResponse::ECR_Block;
+    
+    InitialCollision.Add(ECollisionChannel::ECC_PhysicsBody, PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody));
+    InitialCollision.Add(ECollisionChannel::ECC_WorldStatic, PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic));
+    InitialCollision.Add(ECollisionChannel::ECC_Pawn, PrimitiveComponent->GetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn));
 }
 
 // Called every frame
@@ -52,29 +54,31 @@ void AEnvironmentActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+    if(RepeatReset > 0)
+    {
+        Reset();
+        
+        RepeatReset--;
+    }
 }
 
-void AEnvironmentActor::Reset()
+void AEnvironmentActor::Reset(bool bShouldRepeat)
 {
+    if(bShouldRepeat)
+    {
+        RepeatReset = 4;
+    }
+    
     SetActorTransform(InitialTransform);
     
     UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent());
     
     if(!PrimitiveComponent) { return; }
     
-    if(bInitialCollision)
+    for(auto& Elem : InitialCollision)
     {
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Block);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+        PrimitiveComponent->SetCollisionResponseToChannel(Elem.Key, Elem.Value);
     }
-    else
-    {
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_PhysicsBody, ECollisionResponse::ECR_Ignore);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Ignore);
-        PrimitiveComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-    }
-
 }
 
 void AEnvironmentActor::Toggle(bool bIsEnabled)
