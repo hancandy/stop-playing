@@ -38,11 +38,10 @@ public:
     /**
      * Sets the connected actor
      */
-    void SetConnectedActor(AEnvironmentActor* NewActor, FTransform NewTransform);
+    void SetConnectedActor(AEnvironmentActor* NewActor);
 
 private:
     AEnvironmentActor* ConnectedActor = nullptr;
-    FTransform InitialTransform;
 
     // These will be automatically assigned
     UTextRenderComponent* TitleComponent = nullptr;

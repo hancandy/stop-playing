@@ -45,6 +45,8 @@ public:
 
     UPROPERTY(BlueprintAssignable)
     FOnToggle OnToggle;
+    
+    FTransform InitialTransform;
 	
     /**
      * Resets this actor
@@ -59,7 +61,6 @@ public:
     virtual void Toggle(bool bIsEnabled);
 
 protected:
-    FTransform InitialTransform;
     TMap<ECollisionChannel, ECollisionResponse> InitialCollision;
     int32 RepeatReset = 0;
 

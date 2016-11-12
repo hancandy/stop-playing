@@ -26,8 +26,5 @@ public:
      */
     UFUNCTION()
     virtual void OnInteract(APawn* InteractingPawn) override;
-
-private:
-    FTransform InitialTransform;    
 	
 };

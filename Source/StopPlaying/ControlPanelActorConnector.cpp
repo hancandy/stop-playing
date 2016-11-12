@@ -11,16 +11,14 @@ void UControlPanelActorConnector::OnInteract(APawn* InteractingPawn)
 
     if(!ParentControlPanel) { return; }
     
-    ParentControlPanel->SetConnectedActor(ConnectedActor, InitialTransform);
+    ParentControlPanel->SetConnectedActor(ConnectedActor);
 }
 
 void UControlPanelActorConnector::Init()
 {
     Super::Init();
 
-    if(!ConnectedActor) { return; }
-
-    InitialTransform = ConnectedActor->GetTransform();   
+    if(!ConnectedActor) { return; } 
 
     SetLabel(ConnectedActor->Name);
 }

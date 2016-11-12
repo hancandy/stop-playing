@@ -81,7 +81,7 @@ void AControlPanel::TickRotationTimer(float DeltaTime)
     RotationTimer -= DeltaTime;
 }
 
-void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor, FTransform NewTransform)
+void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor)
 {
     if(!NewActor) { return; }
 
@@ -91,7 +91,6 @@ void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor, FTransform Ne
     }
 
     ConnectedActor = NewActor;
-    InitialTransform = NewTransform;
     TransformTarget = ConnectedActor->GetTransform();
 
     ConnectedActor->Toggle(true);
@@ -129,7 +128,7 @@ void AControlPanel::InitAllWidgets()
 
         if(!ConnectedActor && ActorConnector->ConnectedActor)
         {
-            SetConnectedActor(ActorConnector->ConnectedActor, ActorConnector->ConnectedActor->GetTransform());
+            SetConnectedActor(ActorConnector->ConnectedActor);
         }
     }
 
@@ -383,9 +382,11 @@ void AControlPanel::SetWorldTime(bool bIsEnabled, float EffectScale)
 
 void AControlPanel::SetTranslation(bool bIsEnabled, float EffectScale)
 {
+    if(!ConnectedActor) { return; }
+    
     TranslationTimer = 1.f;
    
-    FVector InitialLocation = InitialTransform.GetLocation(); 
+    FVector InitialLocation = ConnectedActor->InitialTransform.GetLocation(); 
     FVector NewLocation = InitialLocation;
     
     FVector ForwardDirection = FVector::ForwardVector;
@@ -417,14 +418,16 @@ bool AControlPanel::GetTranslation()
 {
     if(!ConnectedActor) { return false; }
 
-    return TransformTarget.GetLocation() != InitialTransform.GetLocation();
+    return TransformTarget.GetLocation() != ConnectedActor->InitialTransform.GetLocation();
 }
 
 void AControlPanel::SetRotation(bool bIsEnabled, float EffectScale)
 {
+    if(!ConnectedActor) { return; }
+    
     RotationTimer = 1.f;
    
-    FRotator InitialRotation = InitialTransform.Rotator(); 
+    FRotator InitialRotation = ConnectedActor->InitialTransform.Rotator(); 
     FRotator NewRotation = InitialRotation;
 
     if(bIsEnabled)
@@ -452,7 +455,7 @@ bool AControlPanel::GetRotation()
 {
     if(!ConnectedActor) { return false; }
 
-    return TransformTarget.GetRotation() != InitialTransform.GetRotation();
+    return TransformTarget.GetRotation() != ConnectedActor->InitialTransform.GetRotation();
 }
 
 void AControlPanel::SetScale(bool bIsEnabled, float EffectScale)
@@ -461,7 +464,7 @@ void AControlPanel::SetScale(bool bIsEnabled, float EffectScale)
 
     ScaleTimer = 1.f;
    
-    FVector InitialScale = InitialTransform.GetScale3D(); 
+    FVector InitialScale = ConnectedActor->InitialTransform.GetScale3D(); 
     FVector NewScale = InitialScale;
     float NewMassScale = 1.f;
 
@@ -499,7 +502,7 @@ bool AControlPanel::GetScale()
 {
     if(!ConnectedActor) { return false; }
 
-    return TransformTarget.GetScale3D() != InitialTransform.GetScale3D();
+    return TransformTarget.GetScale3D() != ConnectedActor->InitialTransform.GetScale3D();
 }
 
 bool AControlPanel::GetWorldGravity()
