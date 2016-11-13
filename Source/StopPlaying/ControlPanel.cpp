@@ -56,7 +56,7 @@ void AControlPanel::TickTranslationTimer(float DeltaTime)
 
     ConnectedActor->SetActorLocation(NewLocation);  
 
-    TranslationTimer -= DeltaTime;
+    TranslationTimer -= DeltaTime * 0.5f;
 }
 
 void AControlPanel::TickScaleTimer(float DeltaTime)
@@ -67,7 +67,7 @@ void AControlPanel::TickScaleTimer(float DeltaTime)
 
     ConnectedActor->SetActorScale3D(NewScale);  
 
-    ScaleTimer -= DeltaTime;
+    ScaleTimer -= DeltaTime * 0.5f;
 }
 
 void AControlPanel::TickRotationTimer(float DeltaTime)
@@ -78,7 +78,7 @@ void AControlPanel::TickRotationTimer(float DeltaTime)
 
     ConnectedActor->SetActorRotation(NewRotation);  
 
-    RotationTimer -= DeltaTime;
+    RotationTimer -= DeltaTime * 0.5f;
 }
 
 void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor)
