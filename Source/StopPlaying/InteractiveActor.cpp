@@ -41,7 +41,7 @@ void AInteractiveActor::BeginReset()
     bResetting = true;
 }
 
-void AInteractiveActor::Reset(bool bShouldRepeat)
+void AInteractiveActor::Reset()
 {
     Super::Reset();
     

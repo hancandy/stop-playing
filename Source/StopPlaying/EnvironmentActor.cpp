@@ -53,21 +53,18 @@ void AEnvironmentActor::BeginPlay()
 void AEnvironmentActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
-    if(RepeatReset > 0)
+    
+    if(RepeatResetIterations > 0)
     {
-        Reset();
+        RepeatResetIterations--;
         
-        RepeatReset--;
+        Reset();
     }
 }
 
-void AEnvironmentActor::Reset(bool bShouldRepeat)
+void AEnvironmentActor::Reset()
 {
-    if(bShouldRepeat)
-    {
-        RepeatReset = 4;
-    }
+    Super::Reset();
     
     SetActorTransform(InitialTransform);
     
@@ -79,6 +76,11 @@ void AEnvironmentActor::Reset(bool bShouldRepeat)
     {
         PrimitiveComponent->SetCollisionResponseToChannel(Elem.Key, Elem.Value);
     }
+}
+
+void AEnvironmentActor::RepeatReset(int32 Iterations)
+{
+    RepeatResetIterations = Iterations;
 }
 
 void AEnvironmentActor::Toggle(bool bIsEnabled)

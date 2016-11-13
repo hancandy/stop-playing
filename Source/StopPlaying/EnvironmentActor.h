@@ -52,7 +52,13 @@ public:
      * Resets this actor
      */
     UFUNCTION(BlueprintCallable, Category="EnvironmentActor")
-    virtual void Reset(bool bShouldRepeat = false);
+    virtual void Reset() override;
+    
+    /**
+     * Repeats the actor reset
+     */
+    UFUNCTION(BlueprintCallable, Category="EnvironmentActor")
+    void RepeatReset(int32 Iterations); 
 
     /**
      * Toggles a state on this actor
@@ -62,6 +68,6 @@ public:
 
 protected:
     TMap<ECollisionChannel, ECollisionResponse> InitialCollision;
-    int32 RepeatReset = 0;
-
+    int32 RepeatResetIterations = 0;
+    
 };
