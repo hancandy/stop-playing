@@ -41,8 +41,8 @@ void ADefaultPlayer::SetupPlayerInputComponent(class UInputComponent* Input)
     // Hook up actions
     Input->BindAction("Jump", IE_Pressed, this, &ADefaultPlayer::Jump);
     Input->BindAction("Push", IE_Pressed, this, &ADefaultPlayer::Push);
-    Input->BindAction("Grab", IE_Pressed, this, &ADefaultPlayer::Grab);
-    Input->BindAction("Grab", IE_Released, this, &ADefaultPlayer::StopGrab);
+    Input->BindAction("Grab", IE_Pressed, this, &ADefaultPlayer::GrabActor);
+    Input->BindAction("Grab", IE_Released, this, &ADefaultPlayer::ReleaseActor);
 }
 
 /**
@@ -91,7 +91,7 @@ void ADefaultPlayer::LookYaw(float AxisValue)
 /**
  * Gets line trace end
  */
-void ADefaultPlayer::GetLineTrace(FVector& Begin, FVector& End)
+void ADefaultPlayer::GetLineTrace(FVector& Begin, FVector& End, bool bUseGrabDistance)
 {
     if(!PhysicsHandle) { return; }
     
@@ -108,7 +108,7 @@ void ADefaultPlayer::GetLineTrace(FVector& Begin, FVector& End)
     PlayerController->GetPlayerViewPoint(Location, Rotation); 
 
     Begin = Location;
-    End = Begin + Rotation.Vector() * LineTraceLength;
+    End = Begin + Rotation.Vector() * (bUseGrabDistance ? GrabbedActorDistance : LineTraceLength);
 }
 
 /**
@@ -119,7 +119,7 @@ void ADefaultPlayer::UpdateGrabbedComponent()
     FVector Begin;
     FVector End;
 
-    GetLineTrace(Begin, End);
+    GetLineTrace(Begin, End, true);
 
     if(PhysicsHandle->GrabbedComponent)
     {
@@ -210,7 +210,7 @@ void ADefaultPlayer::UpdateInteractionPrompt()
 /**
  * Try to grab any object within reach
  */
-void ADefaultPlayer::Grab()
+void ADefaultPlayer::GrabActor()
 {
     AInteractiveActor* InteractiveActor = GetFirstInteractiveActorInReach();
 
@@ -227,17 +227,21 @@ void ADefaultPlayer::Grab()
         }
 
         PhysicsHandle->GrabComponent(ComponentToGrab, NAME_None, InteractiveActor->GetActorLocation(), true);
+
+        OnGrabActor.Broadcast();
     }
 }
 
 /**
  * Stops grabbing
  */
-void ADefaultPlayer::StopGrab()
+void ADefaultPlayer::ReleaseActor()
 {
     if(!PhysicsHandle) { return; }
 
     PhysicsHandle->ReleaseComponent();
+
+    OnReleaseActor.Broadcast();
 }
 
 /**

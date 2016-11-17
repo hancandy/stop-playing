@@ -49,26 +49,7 @@ private:
     TArray<UControlPanelButton*> Buttons;
 
     // Timed properties
-    FTransform TransformTarget;
     float UpdateWidgetsTimer = 0.f;
-    float TranslationTimer = 0.f;
-    float RotationTimer = 0.f;
-    float ScaleTimer = 0.f;
-
-    /**
-     * Ticks the translation timer
-     */
-    void TickTranslationTimer(float DeltaTime);
-    
-    /**
-     * Ticks the scale timer
-     */
-    void TickScaleTimer(float DeltaTime);
-
-    /**
-     * Ticks the rotation timer
-     */
-    void TickRotationTimer(float DeltaTime);
     
     /**
      * Initialises all widgets
