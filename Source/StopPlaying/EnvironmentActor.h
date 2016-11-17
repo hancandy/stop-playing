@@ -47,7 +47,8 @@ public:
     FOnToggle OnToggle;
     
     FTransform InitialTransform;
-	
+	FTransform TargetTransform;
+
     /**
      * Resets this actor
      */
@@ -66,8 +67,27 @@ public:
      */
     virtual void Toggle(bool bIsEnabled);
 
+    /**
+     * Sets the next target rotation
+     */
+    void SetTargetRotation(FRotator NewRotation);
+    
+    /**
+     * Sets the next target scale
+     */
+    void SetTargetScale(FVector NewScale);
+
+    /**
+     * Sets the next target location
+     */
+    void SetTargetLocation(FVector NewLocation);
+
 protected:
     TMap<ECollisionChannel, ECollisionResponse> InitialCollision;
     int32 RepeatResetIterations = 0;
+    float RotationTimer = 0.f;
+    float TranslationTimer = 0.f;
+    float ScaleTimer = 0.f;
     
+    void TickTransform(float DeltaTime);
 };
