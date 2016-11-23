@@ -16,26 +16,15 @@ void AControlPanel::BeginPlay()
     SetTitle();
 
     UpdateAllWidgets();
+
+    if(!ConnectedActor) { return; }
+
+    ConnectedActor->Toggle(true);
 }
 
 void AControlPanel::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
-    if(TranslationTimer > 0.f)
-    {
-        TickTranslationTimer(DeltaTime);
-    }
-
-    if(RotationTimer > 0.f)
-    {
-        TickRotationTimer(DeltaTime);
-    }
-    
-    if(ScaleTimer > 0.f)
-    {
-        TickScaleTimer(DeltaTime);
-    }
 
     if(UpdateWidgetsTimer <= 0.f)
     {
@@ -48,39 +37,6 @@ void AControlPanel::Tick( float DeltaTime )
     }
 }
 
-void AControlPanel::TickTranslationTimer(float DeltaTime)
-{
-    if(!ConnectedActor) { return; } 
-
-    FVector NewLocation = FMath::Lerp(ConnectedActor->GetActorLocation(), TransformTarget.GetLocation(), 1.f - TranslationTimer);
-
-    ConnectedActor->SetActorLocation(NewLocation);  
-
-    TranslationTimer -= DeltaTime * 0.5f;
-}
-
-void AControlPanel::TickScaleTimer(float DeltaTime)
-{
-    if(!ConnectedActor) { return; } 
-
-    FVector NewScale = FMath::Lerp(ConnectedActor->GetActorScale3D(), TransformTarget.GetScale3D(), 1.f - ScaleTimer);
-
-    ConnectedActor->SetActorScale3D(NewScale);  
-
-    ScaleTimer -= DeltaTime * 0.5f;
-}
-
-void AControlPanel::TickRotationTimer(float DeltaTime)
-{
-    if(!ConnectedActor) { return; } 
-
-    FRotator NewRotation = FMath::Lerp(ConnectedActor->GetActorRotation(), TransformTarget.Rotator(), 1.f - RotationTimer);
-
-    ConnectedActor->SetActorRotation(NewRotation);  
-
-    RotationTimer -= DeltaTime * 0.5f;
-}
-
 void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor)
 {
     if(!NewActor) { return; }
@@ -91,7 +47,6 @@ void AControlPanel::SetConnectedActor(AEnvironmentActor* NewActor)
     }
 
     ConnectedActor = NewActor;
-    TransformTarget = ConnectedActor->GetTransform();
 
     ConnectedActor->Toggle(true);
 
@@ -384,8 +339,6 @@ void AControlPanel::SetTranslation(bool bIsEnabled, float EffectScale)
 {
     if(!ConnectedActor) { return; }
     
-    TranslationTimer = 1.f;
-   
     FVector InitialLocation = ConnectedActor->InitialTransform.GetLocation(); 
     FVector NewLocation = InitialLocation;
     
@@ -411,22 +364,20 @@ void AControlPanel::SetTranslation(bool bIsEnabled, float EffectScale)
         }
     }
     
-    TransformTarget.SetLocation(NewLocation);
+    ConnectedActor->SetTargetLocation(NewLocation);
 }
 
 bool AControlPanel::GetTranslation()
 {
     if(!ConnectedActor) { return false; }
 
-    return TransformTarget.GetLocation() != ConnectedActor->InitialTransform.GetLocation();
+    return ConnectedActor->TargetTransform.GetLocation() != ConnectedActor->InitialTransform.GetLocation();
 }
 
 void AControlPanel::SetRotation(bool bIsEnabled, float EffectScale)
 {
     if(!ConnectedActor) { return; }
     
-    RotationTimer = 1.f;
-   
     FRotator InitialRotation = ConnectedActor->InitialTransform.Rotator(); 
     FRotator NewRotation = InitialRotation;
 
@@ -448,61 +399,49 @@ void AControlPanel::SetRotation(bool bIsEnabled, float EffectScale)
         }
     }
     
-    TransformTarget.SetRotation(NewRotation.Quaternion());
+    ConnectedActor->SetTargetRotation(NewRotation);
 }
 
 bool AControlPanel::GetRotation()
 {
     if(!ConnectedActor) { return false; }
 
-    return TransformTarget.GetRotation() != ConnectedActor->InitialTransform.GetRotation();
+    return ConnectedActor->TargetTransform.GetRotation() != ConnectedActor->InitialTransform.GetRotation();
 }
 
 void AControlPanel::SetScale(bool bIsEnabled, float EffectScale)
 {
     if(!ConnectedActor) { return; }
 
-    ScaleTimer = 1.f;
-   
     FVector InitialScale = ConnectedActor->InitialTransform.GetScale3D(); 
     FVector NewScale = InitialScale;
-    float NewMassScale = 1.f;
 
     if(bIsEnabled)
     {
         if(!ConnectedActor->ConstrainScale.X)
         {
             NewScale.X *= EffectScale;
-            NewMassScale += EffectScale / 3;
         }
 
         if(!ConnectedActor->ConstrainScale.Y)
         {
             NewScale.Y *= EffectScale;
-            NewMassScale += EffectScale / 3;
         }
         
         if(!ConnectedActor->ConstrainScale.Z)
         {
             NewScale.Z *= EffectScale;
-            NewMassScale += EffectScale / 3;
         }
     }
-    
-    TransformTarget.SetScale3D(NewScale);
-
-    UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(ConnectedActor->GetRootComponent());
-
-    if(!PrimitiveComponent) { return; }
-
-    PrimitiveComponent->SetMassScale(NAME_None, NewMassScale);
+   
+    ConnectedActor->SetTargetScale(NewScale); 
 }
 
 bool AControlPanel::GetScale()
 {
     if(!ConnectedActor) { return false; }
 
-    return TransformTarget.GetScale3D() != ConnectedActor->InitialTransform.GetScale3D();
+    return ConnectedActor->TargetTransform.GetScale3D() != ConnectedActor->InitialTransform.GetScale3D();
 }
 
 bool AControlPanel::GetWorldGravity()
