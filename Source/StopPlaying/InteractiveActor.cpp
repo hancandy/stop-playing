@@ -27,6 +27,17 @@ void AInteractiveActor::BeginPlay()
 void AInteractiveActor::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+    FVector Position = GetActorLocation();
+
+    if(
+        Position.X < -ResetThreshold || Position.X > ResetThreshold ||
+        Position.Y < -ResetThreshold || Position.Y > ResetThreshold ||
+        Position.Z < -ResetThreshold || Position.Z > ResetThreshold
+    )
+    {
+        Reset();
+    }
 }
 
 void AInteractiveActor::Interact(APawn* InteractingPawn)

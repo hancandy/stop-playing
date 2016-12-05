@@ -17,6 +17,9 @@ public:
 	AInteractiveActor();
 	virtual void BeginPlay() override;
 	virtual void Tick( float DeltaSeconds ) override;
+    
+    UPROPERTY(EditAnywhere)
+    float ResetThreshold = 200000.f;
 
     UPROPERTY(EditAnywhere)
     bool bCanBeGrabbed = true;
